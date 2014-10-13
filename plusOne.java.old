@@ -1,0 +1,45 @@
+public class Solution {
+        public int[] plusOne(int[] digits) {
+        if (digits.length == 0) {
+            return digits;
+        }
+
+        List<Integer> digitsArray = new LinkedList<Integer>();
+        int index = digits.length - 1;
+        boolean carry = false;
+        if (digits[index] == 9) {
+            carry = true;
+        } else {
+            digits[index]++;
+            return digits;
+        }
+        index--;
+        digitsArray.add(0, 0);
+
+        while (index >= 0) {
+            if (digits[index] == 9 && carry == true) {
+                digitsArray.add(0, 0);
+            } else {
+                if (carry)  digitsArray.add(0, ++digits[index]);
+                else digitsArray.add(0, digits[index]);
+                carry = false;
+            }
+            index--;
+        }
+
+        if (carry) {
+            digitsArray.add(0, 1);
+        }
+
+        return buildIntArray(digitsArray);
+    }
+
+    public int[] buildIntArray(List<Integer> integers) {
+        int[] ints = new int[integers.size()];
+        int i = 0;
+        for (Integer n : integers) {
+            ints[i++] = n;
+        }
+        return ints;
+    }
+}
