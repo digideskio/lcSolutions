@@ -1,0 +1,24 @@
+// O(n^2) solution, time exceeded
+
+public class Solution {
+    public int maxArea(int[] height) {
+        int max = 0;
+        int maxHeight = 0;
+        
+        for (int i = 0; i < height.length; i++) {
+            if (maxHeight < height[i]) {
+                maxHeight = height[i];
+                for (int j = i + 1; j < height.length; j++) {
+                    int minHeight = Math.min(height[i], height[j]);
+                    int width = j - i;
+                    if (max < minHeight * width) {
+                        max = minHeight * width;
+                    }
+                }
+            }
+           
+        }
+        
+        return max;
+    }
+}
