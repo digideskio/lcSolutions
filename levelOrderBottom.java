@@ -9,36 +9,30 @@
  */
 public class Solution {
     public List<List<Integer>> levelOrderBottom(TreeNode root) {
-
-        if (root==null) return Collections.emptyList();
-
-        List<List<Integer> > results = new LinkedList<List<Integer> >();
-
-        List<TreeNode> curr = new LinkedList<TreeNode>();
-
-        curr.add(root);
-
-        while(!curr.isEmpty()){
-
-            //iterate one level at a time, without extra space to record level!
-
-            List<TreeNode> next= new LinkedList<TreeNode>();
-
-            List<Integer> r = new LinkedList<Integer>();
-
-            for (TreeNode node:curr){
+        List<List<Integer>> list = new LinkedList<List<Integer>>();
+        
+        if (root == null) {
+            return list;
+        }
+        
+        Queue<TreeNode> queue = new LinkedList<TreeNode>();
+        queue.add(root);
+        
+        while (!queue.isEmpty()) {
+            Queue<TreeNode> next = new LinkedList<TreeNode>();
+            List<Integer> ls = new LinkedList<Integer>();
+            for (TreeNode node : queue) {
+                ls.add(node.val);
                 if (node.left!=null) 
                     next.add(node.left);
-
                 if (node.right!=null) 
                     next.add(node.right);
-
-                r.add(node.val);
             }
-                results.add(0,r);
-
-            curr=next;
+            list.add(0, ls);
+            queue = next;
+            
         }
-        return results;
+        
+        return list;
     }
 }
