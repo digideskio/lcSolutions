@@ -1,4 +1,5 @@
 // use shift
+// pay attention to the return type of Math.abs()
 
 public class Solution {
     public int divide(int dividend, int divisor) {
