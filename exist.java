@@ -1,7 +1,6 @@
-// TLEed solution
-
+// got TLEed
 class Solution {
-    Map<String, Boolean> set = new HashMap<String, Boolean>();
+     Map<String, Boolean> set = new HashMap<String, Boolean>();
     Set<Integer> tracking = new HashSet<Integer>();
 
     public boolean exist(char[][] board, String word) {
@@ -12,11 +11,13 @@ class Solution {
 
         int m = board.length;
         int n = board[0].length;
+        
+        if (word.length() > m * n) return false;
 
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
 
-               if(check(board, i, j, word.substring(1))) return true;
+               if(check(board, i, j, word)) return true;
 
             }
         }
@@ -30,9 +31,10 @@ class Solution {
 
         int m = board.length;
         int n = board[0].length;
-        
+
         boolean success = false;
-        if (word.charAt(0) == board[row][col]) {
+        
+        if (word.charAt(0) == board[row][col] && word.length() <= m * n - tracking.size()) {
             tracking.add(row * n + col);
             if (row + 1 < m && !tracking.contains((row + 1) * n + col)) {
                 success = check(board, row + 1, col, word.substring(1));
@@ -52,7 +54,7 @@ class Solution {
 
             tracking.remove(Integer.valueOf(row * n + col));
         }
-        
+
         set.put(row + " " + col + " " + word.length(), success);
         return success;
     }
