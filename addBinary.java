@@ -47,4 +47,26 @@ public class Solution {
 
         return new StringBuffer(returnStr).reverse().toString();
     }
+
+
+    // anther short and neat solution
+    public String addBinaryAlt(String a, String b) {
+    String result = "";
+    int m = a.length();
+    int n = b.length();
+
+    int tmp = 0;
+
+    while (m+n >0){
+        tmp += m>0? a.charAt(--m) - '0': 0;
+        tmp += n>0? b.charAt(--n) - '0': 0;
+
+        result = tmp%2 +result;
+        tmp /= 2;
+    }
+    return (tmp == 0)? result: "1"+result;
 }
+}
+
+
+
