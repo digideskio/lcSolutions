@@ -1,5 +1,7 @@
 public class Solution {
+    HashMap<String, List<List<String>>> map = new HashMap<String, List<List<String>>>();
     public List<List<String>> partition(String s) {
+        if (map.containsKey(s)) return map.get(s);
         List<List<String>> lst = new LinkedList<List<String>>();
         if (s == null || s.length() == 0) return lst;
         
@@ -23,6 +25,7 @@ public class Solution {
             }
             index++;
         }
+        map.put(s, lst);
         
         return lst;
     }
