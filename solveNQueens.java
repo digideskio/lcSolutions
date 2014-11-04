@@ -1,11 +1,12 @@
 public class Solution {
         public List<String[]> solveNQueens(int n) {
         int[] rows = new int[n];
-        solveNQueens(n, rows, 0);
+        List<String[]> lst = new LinkedList<String[]>();
+        solveNQueens(n, rows, 0, lst);
         return lst;
     }
-    List<String[]> lst = new LinkedList<String[]>();
-    void solveNQueens(int n, int[] rows, int cur) {
+    
+    void solveNQueens(int n, int[] rows, int cur, List<String[]> lst) {
 
         if (n == cur) {
             lst.add(toBoard(rows));
@@ -14,7 +15,7 @@ public class Solution {
         for (int i = 0; i < n; i++) {
             if (isValid(rows, cur, i)) {
                 rows[cur] = i;
-                solveNQueens(n, rows, cur + 1);
+                solveNQueens(n, rows, cur + 1, lst);
             }
         }
     }
