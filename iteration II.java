@@ -627,3 +627,186 @@ public class Solution {
         return true;
      }
 }
+
+/* 
+@Q: Word Ladder II 
+@Method: BFS search, the point is to trim branches
+@Complexity: ???Time O(26^n); 
+@note: 
+*/
+public class Solution {
+     public List<List<String>> findLadders(String start, String end, Set<String> dict) {
+
+         Map<String,Integer> ladderCnt = new HashMap<String,Integer>();
+         Map<String,List<String>> backtrack = new HashMap<String,List<String>>();
+         for (String s : dict) {
+             ladderCnt.put(s, Integer.MAX_VALUE);
+         }
+         ladderCnt.put(end, Integer.MAX_VALUE);
+         ladderCnt.put(start, 0);
+         Queue<String> queue = new LinkedList<String>();
+         queue.add(start);
+         int min=Integer.MAX_VALUE;
+         boolean firstFound = false;
+         while (!queue.isEmpty()) {
+             String word = queue.poll();
+             int step = ladderCnt.get(word) + 1;
+             for (int i = 0; i < word.length(); i++) {
+                 for (char c = 'a'; c <= 'z'; c++) {
+                     String newWord  =word.substring(0, i) + c + word.substring(i + 1);
+                     if (newWord.equals(end)) {
+                         firstFound = true;
+                     }
+                     if (ladderCnt.containsKey(newWord) && ladderCnt.get(newWord) >= step + 1) {
+                         if (!firstFound && ladderCnt.get(newWord) > step + 1) {
+                             queue.add(newWord);
+                         }
+                         List<String> lst = backtrack.get(newWord);
+                         if (lst == null) {
+                             lst = new LinkedList<String>();
+                             backtrack.put(newWord, lst);
+                         }
+                         lst.add(word);
+
+                         ladderCnt.put(newWord, step + 1);
+                     }
+                 }
+             }
+         }
+        if (!firstFound) return new LinkedList<List<String>>();
+         return getAllLadders(backtrack, end);
+     }
+
+     List<List<String>> getAllLadders(Map<String,List<String>> backtrack, String word) {
+         List<List<String>> lst = new LinkedList<List<String>>();
+         List<String> words = backtrack.get(word);
+         if (words == null) {
+             List<String> startLst = new LinkedList<String>();
+             startLst.add(word);
+             lst.add(startLst);
+             return lst;
+         }
+         for (String w : words) {
+             List<List<String>> rest = getAllLadders(backtrack, w);
+             for (List<String> ladder : rest) {
+                 List<String> newLadder = new LinkedList<String>(ladder);
+//                 newLadder.add(w);
+                 newLadder.add(word);
+                 lst.add(newLadder);
+             }
+         }
+         return lst;
+
+     }
+}
+
+/* 
+@Q: Populating Next Right Pointers in Each Node II 
+@Method: iterative approach
+@Complexity: Time O(n); 
+@note: 
+*/
+public class Solution {
+    public void connect(TreeLinkNode root) {
+        if (root == null) return;
+        
+        TreeLinkNode pre = root;
+        TreeLinkNode cur = null;
+        TreeLinkNode head = null;
+        while (pre != null) {
+            if (pre.left != null) {
+                if (head == null) {
+                    head = pre.left;
+                    cur = pre.left;
+                } else {
+                    cur.next = pre.left;
+                    cur = cur.next;
+                }
+                
+            }
+            if (pre.right != null) {
+                if (head == null) {
+                    head = pre.right;
+                    cur = pre.right;
+                } else {
+                    cur.next = pre.right;
+                    cur = cur.next;
+                }
+            }
+            if (pre.next == null) {
+                pre = head;
+                cur = null;
+                head = null;
+            } else {
+                pre = pre.next;
+            }
+        }
+        
+    }
+
+}
+
+
+
+/* 
+@Q: insert into a cyclic sorted list
+@Method: 
+@Complexity: Time O(n); 
+@note: very neat solution 
+*/
+
+public ListNode insert(ListNode node, int x) {
+    if (node == null) {
+        node = new ListNode(x);
+        node.next = node;
+        return node;
+    }
+
+    ListNode cur = node;
+    ListNode pre = null;
+    do {
+        pre = cur;
+        cur = cur.next;
+        if (pre.val <= x && cur.val >= x) {
+            break;
+        }
+        if (pre.val > cur.val) {
+            break;
+        } 
+    } while (cur != node);
+
+    ListNode n = new ListNode(x);
+    n.next = cur;
+    pre.next = n;
+    return node;
+}
+
+/* 
+@Q: Edit Distance 
+@Method: 
+@Complexity: Time O(n^2); 
+@note: careful with initial cases of starter row and column
+*/
+public class Solution {
+    public int minDistance(String word1, String word2) {
+       int[][] minDis = new int[word1.length()+1][word2.length()+1];
+       for (int i = 1; i <= word2.length(); i++) {
+           minDis[0][i] = i;
+       }
+       for (int i = 1; i <= word1.length(); i++) {
+           minDis[i][0] = i; 
+       }
+       
+       for (int i = 1; i <= word1.length(); i++) {
+           for (int j = 1; j <= word2.length(); j++) {
+               if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                   minDis[i][j] = minDis[i-1][j-1];
+               } else {
+                   minDis[i][j] = Math.min(minDis[i][j-1], minDis[i-1][j], minDis[i-1][j-1]) + 1;
+               }
+           }
+       }
+       
+       return minDis[word1.length()][word2.length()];
+    }
+}
