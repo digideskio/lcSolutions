@@ -810,3 +810,151 @@ public class Solution {
        return minDis[word1.length()][word2.length()];
     }
 }
+
+
+/* 
+@Q: Longest Substring Without Repeating Characters 
+@Method: 
+@Complexity: Time O(n); 
+@note: careful with start pos after dup found
+*/
+public class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        int len = 0;
+        int start = 0;
+        Map<Character,Integer> map = new HashMap<Character,Integer>();
+        for (int i = 0; i < s.length(); i++) {
+            if (map.containsKey(s.charAt(i)) && map.get(s.charAt(i)) >= start) {
+                start = map.get(s.charAt(i)) + 1;
+            }
+            len = Math.max(len, i - start + 1);
+            map.put(s.charAt(i), i);
+        }
+        
+        return len;
+    }
+}
+
+/* 
+@Q: Add Binary 
+@Method: 
+@Complexity: Time O(n); 
+@note: 
+*/
+public class Solution {
+    public String addBinary(String a, String b) {
+        a = new StringBuffer(a).reverse().toString();
+        b = new StringBuffer(b).reverse().toString();
+        
+        int index = 0;
+        int carry = 0;
+        StringBuffer sum = new StringBuffer();
+        while (index < a.length() && index < b.length()) {
+            int num = a.charAt(index) - '0' + b.charAt(index) - '0' + carry;
+            sum.append(((num % 2)));
+            carry = num / 2;
+            index++;
+        }
+        while (index < a.length()) {
+            int num = a.charAt(index) - '0' + carry;
+            sum.append(((num % 2)));
+            carry = num / 2;
+            index++;
+        }
+        while (index < b.length()) {
+            int num = b.charAt(index) - '0' + carry;
+            sum.append(((num % 2)));
+            carry = num / 2;
+            index++;
+        }
+        if (carry != 0) {
+            sum.append('1');
+        }
+        return sum.reverse().toString();
+    }
+}
+
+
+/* 
+@Q: Sliding window
+@Method: 
+@Complexity: Time O(n); 
+@note: 
+*/
+public class Solution {
+    public int[] maxSlidingWindow(int[] A, int w) {
+        int[] max = new int[A.length-w];
+        Deque<Integer> window = new ArrayDeque<>();
+        int winSize = 0;
+        while (winSize < w) {
+            if (!window.isEmpty() && A[window.peekLast()] <= A[winSize]) {
+                window.removeLast();
+            } 
+            window.addLast(winSize);
+            winSize++;
+        }
+
+        for (int i = w; i < A.length; i++) {
+            max[i-w] = window.peekFirst();
+            while (!window.isEmpty() && A[window.peekLast()] <= A[winSize]) {
+                window.removeLast();
+            }
+            while (!window.isEmpty() && A[window.peekFirst()] <= i - w) {
+                window.removeFirst();
+            }
+            window.addLast(i);
+        }
+
+        max[A.length-w] = A[window.peekFirst()];
+    }
+}
+
+/* 
+@Q: The Painter’s Partition Problem
+@Method: 
+@Complexity: Time O(n^2); 
+@note: 
+*/
+
+class Solution {
+
+    public int maxPainter(int[] A, int ptNum) {
+        if (A == null || A.length == 0) {
+            return 0;
+        }
+        int[][] map = new int[ptNum+1][A.length+1];
+        maxPainter(A, ptNum, 0, map);
+        return 3;
+    }
+
+
+    int maxPainter(int[] A, int ptNum, int from, int[][] map) {
+        if (map[ptNum][from] != 0) {
+            return map[ptNum][from];
+        }
+        if (ptNum == 1) {
+            return sum(A, from, A.length);
+        }
+        if (from == A.length - 1) {
+            return A[from];
+        }
+
+        int bestMin = Integer.MAX_VALUE;
+        for (int i = from; i <= A.length; i++) {
+            int sum = sum(A, from, i);
+            int rest = maxPainter(A, ptNum - 1, i, map);
+            bestMin = Math.min(Math.max(sum, rest), bestMin);
+
+        }
+        map[ptNum][from] = bestMin;
+        return bestMin;
+    }
+
+    int sum(int[] A, int from, int to) {
+        int sum = 0;
+        for (int i = from; i < to; i++) {
+            sum += A[i];
+        }
+        return sum;
+    }
+}
