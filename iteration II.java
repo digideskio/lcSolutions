@@ -1008,3 +1008,156 @@ public class Solution {
         }
     }
 }
+
+/* 
+@Q: sqrt
+@Method: careful with overflow
+@Complexity: Time O(log n) 
+@note: 
+*/
+public class Solution {
+    public int sqrt(int x) {
+        if (x <= 0) return 0;
+        return sqrt(x, 1, x);
+    }
+    
+    int sqrt(int x, int start, int end) {
+     if (start > end) return end;
+        int mid = (start + end) / 2;
+        if (mid > Integer.MAX_VALUE / mid) return sqrt(x, start, mid - 1);
+        if (mid * mid == x) return mid;
+        else if (mid * mid > x) return sqrt(x, start, mid - 1);
+        else return sqrt(x, mid + 1, end);
+    }
+}
+
+/* 
+@Q: Remove Nth Node From End of List 
+@Method: careful with head removal case
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+       ListNode fast = head;
+       while (n > 0) {
+           fast = fast.next;
+           n--;
+       }
+       if (fast == null) {
+           return head.next;
+       }
+       ListNode slow = head;
+       while (fast.next != null) {
+           slow = slow.next;
+           fast = fast.next;
+       }
+       
+       slow.next = slow.next.next;
+       return head;
+       
+    }
+}
+
+/* 
+@Q: Unique Binary Search Trees II 
+@Method: careful with base case
+@Complexity: Time O(n!) 
+@note: 
+*/
+public class Solution {
+    public List<TreeNode> generateTrees(int n) {
+        return generateTrees(1, n);
+    }
+
+    List<TreeNode> generateTrees(int low, int high) {
+        List<TreeNode> lst = new LinkedList<TreeNode>();
+        if (low > high) {
+            lst.add(null);
+        }
+
+        for (int i = low; i <= high; i++) {
+
+            List<TreeNode> leftTrees =  generateTrees(low, i - 1);
+            List<TreeNode> rightTrees =  generateTrees(i + 1, high);
+
+            for (TreeNode left : leftTrees) {
+                for (TreeNode right : rightTrees) {
+                    TreeNode head = new TreeNode(i);
+                    head.left = left;
+                    head.right = right;
+                    lst.add(head);
+                }
+            }
+
+
+        }
+
+        return lst;
+    }
+}
+
+
+/* 
+@Q: Remove Duplicates from Sorted List II 
+@Method: 
+@Complexity: Time O(n) 
+@note: good do while demo
+*/
+public class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head == null) return head;
+        ListNode dummyHead = new ListNode(0);
+        ListNode dummy = dummyHead;
+        ListNode p = head;
+        Set<Integer> set = new HashSet<Integer>();
+        ListNode pre = null;
+       
+        do {
+            pre = p;
+            p = p.next;
+            if ((p == null || pre.val != p.val) && !set.contains(pre.val)) {
+                dummy.next = pre;
+                dummy = dummy.next;
+            }
+            set.add(pre.val);
+        } while (p != null);
+        
+        dummy.next = null;
+        return dummyHead.next;
+    }
+}
+
+/* 
+@Q: Merge Intervals
+@Method: 
+@Complexity: Time O(n log n) 
+@note: good do while demo; inheriting Comparator as anonymous class
+*/
+public class Solution {
+    public List<Interval> merge(List<Interval> intervals) {
+        if (intervals.size() <= 1) return intervals;
+        Collections.sort(intervals, new Comparator<Interval>() {
+            @Override
+            public int compare(Interval o1, Interval o2) {
+                if (o1.start < o2.start) return -1;
+                else if (o1.start > o2.start) return 1;
+                else return 0;
+            }
+        });
+        Iterator<Interval> it = intervals.iterator();
+        Interval last = null;
+        Interval cur = it.next();
+        do {
+            last = cur;
+            cur = it.next();
+            if (cur != null && cur.start <= last.end) {
+                last.end = Math.max(last.end, cur.end);
+                it.remove();
+                cur = last;
+            } 
+        } while (it.hasNext());
+        
+        return intervals;
+    }
+}
