@@ -1161,3 +1161,239 @@ public class Solution {
         return intervals;
     }
 }
+
+/* 
+@Q: Insert Interval 
+@Method: 
+@Complexity: Time O(n) worst case
+@note: 
+*/
+public class Solution {
+    public List<Interval> insert(List<Interval> intervals, Interval newInterval) {
+        int index = findInsertPos(intervals, newInterval.start, 0, intervals.size() - 1);
+        intervals.add(index, newInterval);
+        // handle left
+        if (index > 0) {
+            Interval pre = intervals.get(index - 1);
+            if (pre.end >= newInterval.start) {
+                pre.end = Math.max(pre.end, newInterval.end);
+                intervals.remove(newInterval);
+                newInterval = pre;
+                index--;
+            }
+        } 
+        // handle right
+        
+        Iterator<Interval> it = intervals.listIterator(index + 1);
+        while (it.hasNext()) {
+            Interval itv = it.next();
+            if (itv.start <= newInterval.end) {
+                newInterval.end = Math.max(itv.end, newInterval.end);
+                it.remove();
+            } else {
+                break;
+            }
+        }
+        
+        return intervals;
+    }
+    
+    int findInsertPos(List<Interval> intervals, int target, int start, int end) {
+        if (start > end) return start;
+        int mid = (start + end) / 2;
+        int itvStart = intervals.get(mid).start;
+        if (itvStart == target) return mid;
+        else if (itvStart > target) return findInsertPos(intervals, target, start, mid - 1);
+        else return findInsertPos(intervals, target, mid + 1, end);
+    }
+}
+
+
+/* 
+@Q: Clone Graph  
+@Method: 
+@Complexity: Time O(n)
+@note: 
+*/
+public class Solution {
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        if (node == null) return node;
+        Queue<UndirectedGraphNode> queue = new ArrayDeque<>();
+        Set<Integer> visited = new HashSet<>();
+        Map<Integer,UndirectedGraphNode> map = new HashMap<>();
+        queue.add(node);
+        
+        while (!queue.isEmpty()) {
+            UndirectedGraphNode n = queue.poll();
+            if (visited.contains(n.label)) continue;
+            UndirectedGraphNode newNode = null;
+            if (map.containsKey(n.label)) {
+                newNode = map.get(n.label);
+            } else {
+                newNode = new UndirectedGraphNode(n.label);
+                map.put(n.label, newNode);
+            }
+            
+            for (UndirectedGraphNode child : n.neighbors) {
+                if (map.containsKey(child.label)) {
+                    newNode.neighbors.add(map.get(child.label));
+                } else {
+                    UndirectedGraphNode newChild = new UndirectedGraphNode(child.label);
+                    newNode.neighbors.add(newChild);
+                    map.put(child.label, newChild);
+                }
+                queue.add(child);
+            }
+            
+            visited.add(newNode.label);
+        }
+        
+        return map.get(node.label);
+    }
+}
+
+
+/* 
+@Q: Set Matrix Zeroes
+@Method: 
+@Complexity: Time O(n^2)
+@note: 
+*/
+public class Solution {
+    public void setZeroes(int[][] matrix) {
+       if (matrix == null || matrix.length == 0 || matrix[0] == null || matrix[0].length == 0) return;
+       
+       boolean firstRow = false, firstCol = false;
+       int n = matrix.length;
+       int m = matrix[0].length;
+       int max = Math.max(n, m);
+       
+       for (int i = 0; i < max; i++) {
+           if (i < m && matrix[0][i] == 0) {
+               firstRow = true;
+           }
+           if (i < n && matrix[i][0] == 0) {
+               firstCol = true;
+           }
+       }
+       
+       for (int i = 1; i < n; i++) {
+           for (int j = 1; j < m; j++) {
+               if (matrix[i][j] == 0) {
+                   matrix[i][0] = 0;
+                   matrix[0][j] = 0;
+               }
+           }
+       }
+       
+       for (int i = 1; i < max; i++) {
+           if (i < m && matrix[0][i] == 0) {
+               paintCol(matrix, i);
+           }
+           if (i < n && matrix[i][0] == 0) {
+               paintRow(matrix, i);
+           }
+       }
+       
+       if (firstRow) paintRow(matrix, 0);
+       if (firstCol) paintCol(matrix, 0);
+    }
+    
+    void paintRow(int[][] matrix, int row) {
+       int m = matrix[0].length;
+       for (int i = 0; i < m; i++) {
+           matrix[row][i] = 0;
+       }
+    }
+    
+    void paintCol(int[][] matrix, int col) {
+        int n = matrix.length;
+       for (int i = 0; i < n; i++) {
+           matrix[i][col] = 0;
+       }
+    }
+}
+
+/* 
+@Q: Jump Game 
+@Method: 
+@Complexity: Time O(n)
+@note: 
+*/
+public class Solution {
+    public boolean canJump(int[] A) {
+        int max = 0; 
+        int step = 0;
+        for (; step < A.length && step <= max; step++) {
+            max = Math.max(max, step + A[step]);
+        }
+        return step == A.length;
+    }
+}
+
+
+/* 
+@Q: Word Break II 
+@Method: 
+@Complexity: Time O(n)
+@note: 
+*/
+public class Solution {
+    Map<String,List<String>> map = new HashMap<>();
+    public List<String> wordBreak(String s, Set<String> dict) {
+        if (map.containsKey(s)) return map.get(s);
+       List<String> lst = new LinkedList<>();
+       if (s.isEmpty()) {
+           lst.add("");
+           return lst;
+       }
+       
+       for (int i = 0; i <= s.length(); i++) {
+           String str = s.substring(0, i);
+           if (dict.contains(str)) {
+               List<String> rest = wordBreak(s.substring(i), dict);
+               for (String restStr : rest) {
+                   String right = restStr.length() > 0 ? " " + restStr : "";
+                   lst.add(str + right);
+               }
+           }
+       }
+       
+       map.put(s, lst);
+       return lst;
+    }
+}
+
+/* 
+@Q: Path Sum II
+@Method: 
+@Complexity: Time O(n) ???
+@note: 
+*/
+public class Solution {
+       public List<List<Integer>> pathSum(TreeNode root, int sum) {
+            List<List<Integer>> lst = new LinkedList<>();
+            if (root == null) return lst;
+            else if (root.left == null && root.right == null && root.val == sum) {
+                List<Integer> l = new LinkedList<>();
+                l.add(root.val);
+                lst.add(l);
+                return lst;
+            }
+            
+            List<List<Integer>> rest = pathSum(root.left, sum - root.val);
+            for (List<Integer> l : rest) {
+                List<Integer> newList = new LinkedList<>(l);
+                newList.add(0, root.val);
+                lst.add(newList);
+            }
+            rest = pathSum(root.right, sum - root.val);
+            for (List<Integer> l : rest) {
+                List<Integer> newList = new LinkedList<>(l);
+                newList.add(0, root.val);
+                lst.add(newList);
+            }
+            
+            return lst;
+    }
+}
