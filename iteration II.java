@@ -596,6 +596,30 @@ public class Solution {
         }
     }
 }
+/* 
+@Q: Pow(x, n) 
+@Method: binary search
+@Complexity: Time O(logn) Space O(1); 
+@note: 
+*/
+class Solution {
+    double power(double x, int n) {
+        double val = x;
+        int start = 0;
+        double result = 1;
+        while (start < n) {
+            int pow = 1;
+            x = val;
+            while (start <= n - pow) {
+                result *= x;
+                x *= x;
+                start += pow;
+                pow *= 2;
+            }
+        }
+        return result;
+    }
+}
 
 /* 
 @Q: Valid Palindrome 
