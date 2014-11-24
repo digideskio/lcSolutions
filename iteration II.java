@@ -299,45 +299,36 @@ public class Solution {
 @Q: Reverse Linked List II 
 @Method: iterative
 @Complexity: Time O(n); 
-@note: Pay attention to different starting positions(from head or mid)
+@note: add dummy to the head to avoid so many corner cases
 */
 public class Solution {
-    public ListNode reverseBetween(ListNode head, int m, int n) {
-        if (head == null) return head;
+    public ListNode reverseBetween(ListNode head, int m, int n) {  
+        ListNode dummyHead = new ListNode(0);
+        dummyHead.next = head;
+        ListNode dummy = dummyHead;
         
-        ListNode left = null;
-        if (m > 1) {
-            left = head;
-            int cnt = m - 2;
-            while (cnt > 0) {
-                left = left.next;
-                cnt--;
-            }
+        for (int i = 1; i < m; i++) {
+            dummy = dummy.next;
         }
         
-        ListNode reverseHead = (left == null ? head : left.next);
-        ListNode p = reverseHead;
+        ListNode reverse = dummy.next;
+        ListNode reverseTail = reverse;
         ListNode last = null;
-        int cnt = n - m + 1;
-        while (cnt > 0) {
-            ListNode next = p.next;
-            if (last != null) {
-                p.next = last;
+        for (int i = m; i <= n; i++) {
+            ListNode next = reverse.next;
+            if (last == null) {
+                reverse.next = null;
             } else {
-                p.next = null;
+                reverse.next = last;
             }
-            last = p;
-            p = next;
-            cnt--;
+            last = reverse;
+            reverse = next;
         }
         
-        reverseHead.next = p;
-        if (left == null) {
-            return last;
-        } else {
-            left.next = last;
-            return head;
-        }
+        dummy.next = last;
+        reverseTail.next = reverse;
+        
+        return dummyHead.next;
         
     }
 }
@@ -1395,5 +1386,405 @@ public class Solution {
             }
             
             return lst;
+    }
+}
+
+/* 
+@Q: Same Tree 
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+       if (p == null && q == null) return true;
+       else if (p == null || q == null) return false;
+       if (p.val == q.val)
+            return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+       else return false;
+    }
+}
+
+/* 
+@Q: Swap Nodes in Pairs
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public ListNode swapPairs(ListNode head) {
+        ListNode dummyHead = new ListNode(0);
+        ListNode dummy = dummyHead;
+        ListNode p = head;
+        while (p != null && p.next != null) {
+            ListNode right = p.next.next;
+            dummy.next = p.next;
+            dummy = dummy.next;
+            dummy.next = p;
+            dummy = dummy.next;
+            dummy.next = null;
+            p = right;
+        }
+        if (p != null) {
+            dummy.next = p;
+        }
+        
+        return dummyHead.next;
+    }
+}
+
+/* 
+@Q: Multiply Strings 
+@Method: 
+@Complexity: Time O(n^2) 
+@note: 
+*/
+public class Solution {
+    public String multiply(String num1, String num2) {
+        int[] result = new int[num1.length()+num2.length()];
+        num1 = new StringBuffer(num1).reverse().toString();
+        num2 = new StringBuffer(num2).reverse().toString();
+        
+        for (int i = 0; i < num1.length(); i++) {
+            int a = num1.charAt(i) - '0';
+            int carry = 0;
+            for (int j = 0; j < num2.length(); j++) {
+                int b = num2.charAt(j) - '0';
+                result[i+j] += a * b + carry;
+                carry = result[i+j] / 10;
+                result[i+j] %= 10;
+            }
+            result[i+num2.length()] += carry;
+        }
+         StringBuffer sb=new StringBuffer();
+        int i=result.length-1;
+        while(i>0 && result[i]==0){
+            i--;
+        }
+        
+        while(i >= 0){
+            sb.append(result[i]);
+            i--;
+        }
+        
+        return sb.toString();
+    }
+}
+
+/* 
+@Q: Maximal Rectangle 
+@Method: 
+@Complexity: Time O(n^2) 
+@note: 
+*/
+public class Solution {
+    public int maximalRectangle(char[][] matrix) {
+        if (matrix.length == 0 || matrix[0].length == 0) return 0;
+        int m = matrix.length;
+        int n = matrix[0].length;
+        for (int j = 0; j < n; j++) {
+            for (int i = 1; i < m; i++) {
+                if (matrix[i][j] == '1') {
+                    matrix[i][j] = (char)(matrix[i-1][j] + 1);
+                }
+            }
+        }
+        int globalMax = 0;
+        for (int i = 0; i < m; i++) {
+            int max = computeMax(matrix, i);
+            globalMax = Math.max(max, globalMax);
+        }
+
+        return globalMax;
+    }
+
+    int computeMax(char[][] matrix, int row) {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        int maxArea = 0;
+        Stack<Integer> stack = new Stack<>();
+        for (int j = 0; j < n; j++) {
+            if (!stack.isEmpty() && (matrix[row][stack.peek()] - '0') > (matrix[row][j] - '0')) {
+                int index = stack.pop();
+                int length = !stack.isEmpty() ? j - stack.peek() - 1 : j;
+                maxArea = Math.max(maxArea, (matrix[row][index] - '0') * length);
+                j--;
+            } else {
+                stack.push(j);
+            }
+        }
+
+        while (!stack.isEmpty()) {
+            int index = stack.pop();
+            int length = !stack.isEmpty() ? n - stack.peek() - 1 : n;
+            maxArea = Math.max(maxArea, (matrix[row][index] - '0') * length);
+        }
+        return maxArea;
+    }
+}
+
+
+/* 
+@Q: Best Time to Buy and Sell Stock II 
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public int maxProfit(int[] prices) {
+        int max = 0;
+        for (int i = 1; i < prices.length; i++) {
+            max += Math.max(prices[i] - prices[i-1], 0);
+        }
+        return max;
+    }
+}
+
+
+/* 
+@Q: Permutation Sequence
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public String getPermutation(int n, int k) {
+        int[] num = new int[n];
+        int count = 1;
+        for (int i = 0; i < n; i++) {
+            num[i] = i + 1;
+            count *= (i + 1);
+        }
+        
+        k--;
+        StringBuffer sb = new StringBuffer();
+        for (int i = n - 1; i >= 0; i--) {
+            count /= (i + 1);
+            int index = k / count;
+            k %= count;
+            sb.append(num[index]);
+            deletePos(num, index);
+            
+        }
+        return sb.toString();
+    }
+    
+    void deletePos(int[] num, int pos) {
+        for (int i = pos; i < num.length - 1; i++) {
+            num[i] = num[i+1];
+        }
+    }
+}
+
+/* 
+@Q: Search in Rotated Sorted Array II 
+@Method: 
+@Complexity: Time O(n) worst time ???
+@note: 
+*/
+public class Solution {
+    public boolean search(int[] A, int target) {
+        if (A == null || A.length == 0) return false;
+        return search(A, target, 0, A.length - 1);
+    }
+    
+    public boolean search(int[] A, int target, int low, int high) {
+        if (low > high) return false;
+        
+        int mid = (low + high) / 2;
+        if (A[mid] == target) return true;
+        else if (A[low] < A[mid]) {
+            if (target >= A[low] && target < A[mid]) return search(A, target, low, mid - 1);
+            else return search(A, target, mid + 1, high);
+        } else if (A[low] > A[mid]) {
+            if (target > A[mid] && target <= A[high]) return search(A, target, mid + 1, high);
+            else return search(A, target, low, mid - 1);
+        } else {
+            if (A[low] == A[high]) {
+                return search(A, target, low, mid - 1) || search(A, target, mid + 1, high);
+            } else {
+                return search(A, target, mid + 1, high);
+            }
+        }
+    }
+}
+
+/* 
+@Q: Integer to Roman
+@Method: 
+@Complexity: Time O(n) worst time ???
+@note: 
+*/
+public class Solution {
+  
+   public String intToRoman(int num)
+{
+    char[] symbol = {'I', 'V', 'X', 'L', 'C', 'D', 'M'};
+        int scale = 1000;
+        StringBuilder roman = new StringBuilder("");
+        for(int i = 6; i >= 0; i -= 2)
+        {
+            int digit = num/scale;
+            if(digit != 0)
+            {
+                if(digit <= 3)
+                {
+                    while (digit > 0) {
+                        roman.append(symbol[i]);
+                        digit--;
+                    }
+                }
+                else if(digit == 4)
+                {
+                    roman.append(symbol[i]);
+                    roman.append(symbol[i + 1]);
+                }
+                else if(digit == 5)
+                {
+                    roman.append(symbol[i + 1]);
+                }
+                else if(digit<=8)
+                {
+                    roman.append(symbol[i + 1]);
+                    digit -= 5;
+                    while (digit > 0) {
+                        roman.append(symbol[i]);
+                        digit--;
+                    }
+                }
+                else if(digit == 9)
+                {
+                    roman.append(symbol[i]);
+                    roman.append(symbol[i + 2]);
+                }
+            }
+            num = num % scale;
+            scale /= 10;
+        }
+
+        return roman.toString();
+}
+
+}
+
+/* 
+@Q: Palindrome Number 
+@Method: 
+@Complexity: Time O(n)
+@note: 
+*/
+public class Solution {
+    public boolean isPalindrome(int x) {
+        if (x < 0) return false;
+        int high = 1;
+        while (x / high >= 10) {
+            high *= 10;
+        }
+
+
+        while (high >= 10) {
+            if (x / high != x % 10) return false;
+            x %= high;
+            x /= 10;
+            high /= 100;
+        }
+
+        return true;
+    }
+}
+
+
+
+/* 
+@Q: Find Minimum in Rotated Sorted Array 
+@Method: 
+@Complexity: Time O(log n)
+@note: 
+*/
+public class Solution {
+    public int findMin(int[] num) {
+        if (num == null || num.length == 0) {
+            return 0;
+        }
+        return findMin(num, 0, num.length - 1);
+    }
+    
+    public int findMin(int[] num, int low, int high) {
+        if (low == high) {
+            return num[low];
+        }
+        
+        int mid = (low + high) / 2;
+        if (num[mid] < num[high]) { // pivot is at left
+            return findMin(num, low, mid);
+        } else return findMin(num, mid + 1, high); //pivot is at right
+    }
+}
+
+
+/* 
+@Q: Subsets II 
+@Method: 
+@Complexity: Time O(2^n)
+@note: 
+*/
+class Solution {
+    public List<List<Integer>> subsetsWithDup(int[] num) {
+        Arrays.sort(num);
+        return subsets(num, 0);
+    }
+
+    List<List<Integer>> subsets(int[] S, int index) {
+        Set<List<Integer>> set = new HashSet<List<Integer>>();
+        if (S.length == index) {
+            set.add(Collections.<Integer>emptyList());
+            List<List<Integer>> lst = new LinkedList<List<Integer>>(set);
+            return lst;
+        }
+
+        List<List<Integer>> rest = subsets(S, index + 1);
+        for (List<Integer> list : rest) {
+            List<Integer> nList = new LinkedList<Integer>(list);
+            nList.add(0, S[index]);
+            set.add(nList);
+        }
+        set.addAll(rest);
+
+        List<List<Integer>> lst = new LinkedList<List<Integer>>(set);
+        return lst;
+    }
+}
+
+/* 
+@Q: 3Sum Closest  
+@Method: 
+@Complexity: Time O(2^n)
+@note: 
+*/
+public class Solution {
+    public int threeSumClosest(int[] num, int target) {
+        Arrays.sort(num);
+        int closest = Integer.MAX_VALUE;
+        int val = 0;
+        for (int i = 0; i < num.length - 2; i++) {
+            int start = i + 1;
+            int end = num.length - 1;
+
+            while (start < end) {
+                int sum = num[i] + num[start] + num[end];
+                if (Math.abs(target - sum) < closest) {
+                    closest = Math.abs(target - sum);
+                    val = sum;
+                }
+                if (target == sum) return sum;
+                else if (target > sum) {
+                    start++;
+                } else {
+                    end--;
+                }
+            }
+
+        }
+        return val;
     }
 }
