@@ -149,6 +149,59 @@ public class Solution {
     }
 }
 
+/* 
+@Q: Trapping Rain Water when 0 means leaking
+@Method: Two pointers
+@Complexity: Time O(n); 
+@note: 
+*/
+class Solution {
+    public int trap(int[] A) {
+        int water = 0;
+        int tmpLeft = 0;
+        int tmpRight = 0;
+        int leftHeight = 0, rightHeight = 0;
+        int left = 0, right = A.length - 1;
+        while (left <= right) {
+            if (A[left] <= A[right]) {
+                if (A[left] > leftHeight) {
+                    water += tmpLeft;
+                    tmpLeft = 0;
+                    leftHeight = A[left];
+                } else {
+                    if (A[left] == 0) {
+                        leftHeight = 0;
+                        tmpLeft = 0;
+                    } else {
+                        tmpLeft += Math.max(0, leftHeight - A[left]);
+                    }
+                }
+                left++;
+            } else {
+                if (A[right] > rightHeight) {
+                    water += tmpRight;
+                    tmpRight = 0;
+                    rightHeight = A[right];
+                } else {
+                    if (A[right] == 0) {
+                        rightHeight = 0;
+                        tmpRight = 0;
+                    } else {
+                        tmpRight += Math.max(0, rightHeight - A[right]);
+                    }
+                }
+                right--;
+            }
+        }
+
+        if (A[left] != 0) {
+            water += tmpLeft;
+            water += tmpRight;
+        }
+        return water;
+    }
+}
+
 
 /* 
 @Q: Largest Rectangle in Histogram  
@@ -1810,5 +1863,123 @@ public class Solution {
 
         }
         return val;
+    }
+}
+
+/* 
+@Q: Count and Say
+@Method: 
+@Complexity: Time O(kn) ???
+@note: 
+*/
+public class Solution {
+    public String countAndSay(int n) {
+        String str = "1";
+
+        for (int i = 1; i < n; i++) {
+            StringBuffer sb = new StringBuffer();
+            char pre = str.charAt(0);
+            int count = 1;
+            for (int j = 1; j < str.length(); j++) {
+                if (pre == str.charAt(j)) {
+                    count++;
+                } else {
+                    sb.append(count);
+                    sb.append(pre);
+                    count = 1;
+                }
+                pre = str.charAt(j);
+            }
+            sb.append(count);
+            sb.append(pre);
+            str = sb.toString();
+        }
+
+        return str;
+    }
+}
+
+/* 
+@Q: Longest increasing subsequence
+@Method: 
+@Complexity: Time O(n log n) 
+@note: 
+*/
+class Solution {
+    int longestLen(int[] A) {
+        if (A == null || A.length == 0) return 0;
+        int[] lens = new int[A.length];
+        int len = 1;
+        lens[0] = A[0];
+        for (int i = 1; i < A.length; i++) {
+            int index = insertIndex(lens, A[i], 0, len - 1);
+
+            lens[index] = A[i];
+            if (index == len) {
+                len++;
+            }
+        }
+        return len;
+    }
+
+    int insertIndex(int[] A, int target, int low, int high) {
+        if (low > high) return low;
+        int mid = (low + high) / 2;
+        if (A[mid] == target) return mid;
+        else if (A[mid] > target) return insertIndex(A, target, low, mid - 1);
+        else return insertIndex(A, target, mid + 1, high);
+    }
+}
+
+/* 
+@Q: Lowest Common Ancestor of a Binary Tree (Bottom-up solution)
+@Method: 
+@Complexity: Time O(n) worst case 
+@note: 
+*/
+class Solution {
+    TreeNode LCA(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null || root == p || root == q) return root;
+        TreeNode l = LCA(root.left, p, q);
+        TreeNode r = LCA(root.right, p, q);
+        if (l != null && r != null) {
+            return root;
+        }
+        return l != null ? l : r;
+    }
+}
+
+/* 
+@Q: Next Permutation 
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public void nextPermutation(int[] num) {
+        if (num == null || num.length < 2) return;
+        
+        int index = num.length - 2;
+        while (index >= 0) {
+            if (num[index] < num[index+1]) break;
+            index--;
+        }
+      
+        if (index >= 0) {
+             int j = index + 1;
+            for (; j < num.length && num[index] < num[j]; j++);
+            swap(num, index, --j);
+        }
+        
+        int low = index + 1, high = num.length - 1;
+        while (low < high) {
+            swap(num, low++, high--);
+        }
+    }
+    
+    void swap(int[] num, int i, int j) {
+        int tmp = num[i];
+        num[i] = num[j];
+        num[j] = tmp;
     }
 }
