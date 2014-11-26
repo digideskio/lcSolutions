@@ -1983,3 +1983,453 @@ public class Solution {
         num[j] = tmp;
     }
 }
+
+/* 
+@Q: Reverse integer
+@Method: 
+@Complexity: Time O(n) 
+@note: carefull with overflows
+*/
+public class Solution {
+    public int reverse(int x) {
+        int num = 0;
+        while (x != 0) {
+            if (x > 0 && num > (Integer.MAX_VALUE - x % 10) / 10) {
+                num = 0;
+                break;
+            }
+            if (x < 0 && num < (Integer.MIN_VALUE - x % 10) / 10) {
+                num = 0;
+                break;
+            }
+            num = num * 10 + x % 10;
+            x /= 10;
+        } 
+        
+        return num;
+    }
+}
+
+/* 
+@Q: Best time to buy stock
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public int maxProfit(int[] prices) {
+        int max = 0;
+        int minSoFar = Integer.MAX_VALUE;
+        for (int price : prices) {   
+            if (price < minSoFar) {
+                minSoFar = price;
+            }
+            int diff = price - minSoFar;
+            if (diff > max) {
+                max = diff;
+            }
+        }
+        return max;
+    }
+}
+
+/* 
+@Q: Combination Sum
+@Method: 
+@Complexity: Time O(n!)??? 
+@note: 
+*/
+public class Solution {
+     public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        Arrays.sort(candidates);
+
+        return combinationSum(candidates, target, 0);
+    }
+
+    Map<Integer,List<List<Integer>>> map = new HashMap<>();
+    public List<List<Integer>> combinationSum(int[] candidates, int target, int index) {
+        if (map.containsKey(target * candidates.length + index)) return map.get(target * candidates.length + index);
+        List<List<Integer>> lst = new ArrayList<>();
+        if (target == 0) {
+            lst.add(Collections.<Integer>emptyList());
+            return lst;
+        }
+        if (index == candidates.length) return lst;
+        for (int i = 0; i * candidates[index] <= target; i++) {
+            List<List<Integer>> rest = combinationSum(candidates, target - i * candidates[index], index + 1);
+
+            for (List<Integer> l : rest) {
+                List<Integer> nL = new LinkedList<>(l);
+                for (int j = 0; j < i; j++) {
+                    nL.add(0, candidates[index]);
+                }
+
+                lst.add(nL);
+            }
+        }
+
+
+        map.put(target * candidates.length + index, lst);
+        return lst;
+    }
+}
+
+
+/* 
+@Q: Symmetric Tree 
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+      public boolean isSymmetric(TreeNode root) {
+        if (root == null) return true;
+
+        Stack<TreeNode> stack1 = new Stack<>();
+        Stack<TreeNode> stack2 = new Stack<>();
+
+        TreeNode p1 = root;
+        TreeNode p2 = root;
+
+        while (!stack1.isEmpty() || p1 != null) {
+            if ((p1 == null && p2 != null) || (p2 == null && p1 != null)) return false;
+            if (p1 != null) {
+                stack1.push(p1);
+                p1 = p1.left;
+
+                stack2.push(p2);
+                p2 = p2.right;
+            } else {
+                p1 = stack1.pop();
+                p2 = stack2.pop();
+
+                if (p1.val != p2.val) return false;
+                if (p1 == root) break;
+
+                p1 = p1.right;
+                p2 = p2.left;
+            }
+        }
+
+        return true;
+    }
+}
+
+
+/* 
+@Q: Remove dups 
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public int removeDuplicates(int[] A) {
+        if (A.length < 2) return A.length;
+        int idx = 0;
+        for (int i = 1; i < A.length; i++) {
+            if (A[idx] != A[i]) {
+                A[++idx] = A[i];
+                
+            }
+        }
+        return idx + 1;
+    }
+}
+
+/* 
+@Q: Roman to Int
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public int c2n(char c) {  
+        switch(c) {  
+            case 'I': return 1;  
+            case 'V': return 5;  
+            case 'X': return 10;  
+            case 'L': return 50;  
+            case 'C': return 100;  
+            case 'D': return 500;  
+            case 'M': return 1000;  
+            default: return 0;  
+        }  
+    } 
+    
+    public int romanToInt(String s) {
+        int result = 0;
+        
+        if (s.isEmpty()) {
+            return result;
+        }
+        
+        for (int i = 0; i < s.length(); i++) {
+            
+            if (i < s.length() - 1 && c2n(s.charAt(i)) < c2n(s.charAt(i + 1))) {
+                result -= c2n(s.charAt(i));
+            } else {
+                result += c2n(s.charAt(i));
+            }
+        }
+        
+        return result;
+    }
+}
+
+/* 
+@Q: Spiral Matrix II 
+@Method: 
+@Complexity: Time O(n^2) 
+@note: 
+*/
+public class Solution {
+public int[][] generateMatrix(int n) {
+        int[][] matrix = new int[n][n];
+
+        int layer = (n + 1) / 2;
+        int count = 1;
+        for (int i = 0; i < layer; i++) {
+            int start = i;
+            int end = n - i - 1;
+            if (start == end) {
+                matrix[start][start] = count++;
+                break;
+            }
+            // top
+            for (int j = start; j < end; j++) {
+                matrix[start][j] = count++;
+            }
+            //right
+            for (int j = start; j < end; j++) {
+                matrix[j][end] = count++;
+            }
+            //bottom
+            for (int j = end; j > start; j--) {
+                matrix[end][j] = count++;
+            }
+            //bottom
+            for (int j = end; j > start; j--) {
+                matrix[j][start] = count++;
+            }
+        }
+
+        return matrix;
+    }
+}
+
+/* 
+@Q: Divide Two Integers 
+@Method: 
+@Complexity: Time O(log n) 
+@note: 
+*/
+public class Solution {
+    public int divide(int dividend, int divisor) {
+        long a = Math.abs((long)dividend);
+        long b = Math.abs((long)divisor);
+        return (dividend ^ divisor) >> 31 != 0 ? (int) (-divide(a, b, 0, a)) : (int)divide(a, b, 0, a);
+    }
+
+    long divide(long a, long b, long start, long end) {
+        if (start > end) return end;
+        long mid = (start + end) / 2;
+
+        if (mid * b == a) return mid;
+        else if (mid * b > a) return divide(a, b, start, mid - 1);
+        else return divide(a, b, mid + 1, end);
+    }
+}
+public class Solution {
+    public int divide(int dividend, int divisor) {
+        long a = Math.abs((long)dividend);
+        long b = Math.abs((long)divisor);
+        long res = 0;
+        
+        while (a >= b) {
+            long c = b;
+            for (int i = 0; a >= c; i++, c <<= 1) {
+                a -= c;
+                res += 1 << i;
+            }
+        }
+        
+        return (dividend ^ divisor) >> 31 != 0 ? (int) (-res) : (int)res;
+    }
+}
+
+
+/* 
+@Q: Simplify Path
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public String simplifyPath(String path) {
+         String[] paths = path.split("/");
+        Stack<String> stack = new Stack<String>();
+        for (String s : paths) {
+    
+            if (s.length() > 0) {
+                if (s.equals("..")) {
+                    if (stack.empty()) {
+                        continue;
+                    }
+                    stack.pop();
+                } else if (s.equals(".")) {
+                    continue;
+                } else {
+                    stack.push(s);
+                }
+            }
+    
+        }
+        String result = "";
+        while (!stack.empty()) {
+            result = "/" + stack.pop() + result;
+        }
+        if (result.length() == 0) {
+            result += "/";
+        }
+        return result;
+        }
+}
+
+
+/* 
+@Q: Reorder List
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+     public void reorderList(ListNode head) {
+        if (head == null) return;
+        ListNode p1 = head;
+        ListNode mid = findMid(head);
+        ListNode p2 = mid.next;
+
+        if (p2 == null) return;
+
+        mid.next = null;
+
+        // reverse p2
+        p2 = reverse(p2);
+        ListNode dummyHead = new ListNode(0);
+        ListNode dummy = dummyHead;
+        while (p1 != null && p2 != null) {
+            ListNode p1Next = p1.next;
+            ListNode p2Next = p2.next;
+            dummy.next = p1;
+            dummy = dummy.next;
+            dummy.next = p2;
+            dummy = dummy.next;
+            p1 = p1Next;
+            p2 = p2Next;
+        }
+
+        if (p1 != null) {
+            dummy.next = p1;
+            p1.next = null;
+        }
+    }
+
+    ListNode reverse(ListNode head) {
+        ListNode p = head;
+        ListNode last = null;
+        while (p != null) {
+            ListNode next = p.next;
+            if (last != null) {
+                p.next = last;
+            } else {
+                p.next = null;
+            }
+            last = p;
+            p = next;
+        }
+        return last != null ? last : head;
+    }
+
+    ListNode findMid(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = head;
+        while (fast.next != null && fast.next.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+
+        return slow;
+    }
+}
+
+/* 
+@Q: ZigZap conversio
+n@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public String convert(String s, int nRows) {
+        if (nRows == 1) return s;
+        int round = nRows - 1;
+        StringBuffer[] strs = new StringBuffer[nRows];
+        for (int i = 0; i < nRows; i++) {
+            strs[i] = new StringBuffer();
+        }
+
+        for (int i = 0; i < s.length(); i += round * 2) {
+            int n = 0;
+            while (n < round) {
+                if (i + n == s.length()) break;
+                strs[n].append(s.charAt(i + n));
+                n++;
+            }
+            while (n < round * 2) {
+                if (i + n == s.length()) break;
+                strs[round*2-n].append(s.charAt(i + n));
+                n++;
+            }
+        }
+
+        for (int i = 1; i < nRows; i++) {
+            strs[0].append(strs[i]);
+        }
+
+        return strs[0].toString();
+    }
+}
+
+/* 
+@Q: Longest Common Prefix 
+n@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public String longestCommonPrefix(String[] strs) {
+        StringBuffer sb = new StringBuffer();
+        if (strs == null || strs.length == 0) return sb.toString();
+        if (strs.length == 1) return strs[0];
+        
+        for (int i = 0; ; i++) {
+            boolean success = true;
+            for (int j = 0; j < strs.length - 1; j++) {
+                if (strs[j].length() <= i || strs[j+1].length() <= i) {
+                    success = false;
+                    break;
+                }
+                if (strs[j].charAt(i) != strs[j+1].charAt(i)) {
+                    success = false;
+                    break;
+                }
+            }
+            if (success) {
+                sb.append(strs[0].charAt(i));
+            } else {
+                break;
+            }
+        }
+        
+        return sb.toString();
+    }
+}
