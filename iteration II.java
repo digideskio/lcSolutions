@@ -2433,3 +2433,216 @@ public class Solution {
         return sb.toString();
     }
 }
+
+/* 
+@Q: Distinct Subsequences 
+n@Method: 
+@Complexity: Time O(n^2) Space(n) 
+@note: 
+*/
+public class Solution {
+    public int numDistinct(String S, String T) {
+        if (S.length() < T.length()) return 0;
+        
+        int[] table = new int[S.length()+1];
+        for (int i = 0; i <= S.length(); i++) {
+            table[i] = 1;
+        }
+        int last = 0;
+        int cur = 0;
+        for (int i = 1; i <= T.length(); i++) {
+            last = 0;
+            for (int j = 1; j <= S.length(); j++) {
+                if (S.charAt(j-1) == T.charAt(i-1)) {
+                    cur = last + table[j-1];
+                    //table[i][j] = table[i-1][j-1] + table[i][j-1];
+                } else {
+                    //table[i][j] = table[i][j-1];
+                    cur = last;
+                }
+                
+                table[j-1] = last;
+                last = cur;
+            }
+            table[S.length()] = cur;
+        }
+        
+        return table[S.length()];
+    }
+}
+
+
+/* 
+@Q: Rotate Image 
+n@Method: 
+@Complexity: Time O(n^2) 
+@note: 
+*/
+public class Solution {
+    public void rotate(int[][] matrix) {
+        int rowToVisit = matrix.length / 2;
+        int size = matrix.length;
+        for (int i = 0; i < rowToVisit; i++) {
+            //grids: size - 2 * row;
+            //begining: i
+            //last: size - i - 1
+            for (int j = i; j < size - i - 1; j++) {
+                int offset = j - i;
+                int temp = matrix[i][j];
+                
+                 //left to top
+                matrix[i][j] = matrix[size - i - 1 - offset][i];
+                
+                  //bottom to left
+                matrix[size - i - 1 - offset][i] = matrix[size - i - 1][size - i - 1 - offset];
+                
+                 //right to bottom
+                matrix[size - i - 1][size - i - 1 - offset] = matrix[i + offset][size - i - 1];
+                
+                //top to right
+                matrix[i + offset][size - i - 1] = temp;
+               
+            }
+        }
+    }
+    
+   
+}
+
+/* 
+@Q: Sort Colors 
+n@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public void sortColors(int[] A) {
+        int zeros = 0;
+        int twos = A.length - 1;
+        
+        int index = 0;
+        
+        while (index <= twos) {
+            if (A[index] == 0) {
+                int temp = A[index];
+                A[index] = A[zeros];
+                A[zeros] = temp;
+                zeros++;
+            } else if (A[index] == 1) {
+                index++;
+            } else if (A[index] == 2) {
+                int temp = A[index];
+                A[index] = A[twos];
+                A[twos] = temp;
+                twos--;
+            }
+            index = Math.max(zeros, index);
+        }
+    }
+}
+
+
+/* 
+@Q: Maximum Product Subarray 
+n@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public int maxProduct(int[] A) {
+     int max = A[0], min = A[0], maxAns = A[0];
+       for (int i = 1; i < A.length; i++) {
+          int mx = max, mn = min;
+          max = Math.max(Math.max(A[i], mx * A[i]), mn * A[i]);
+          min = Math.min(Math.min(A[i], mx * A[i]), mn * A[i]);
+          maxAns = Math.max(max, maxAns);
+       }
+       return maxAns;
+       
+    }
+}
+
+/* 
+@Q: Restore IP Addresses 
+n@Method: 
+@Complexity: Time O() ???
+@note: 
+*/
+class Solution {
+    public List<String> restoreIpAddresses(String s) {
+        return restoreIpAddresses(s, 4);
+    }
+
+    List<String> restoreIpAddresses(String s, int number) {
+        List<String> lst = new LinkedList<>();
+
+        if (number == 0 && s.length() == 0) {
+            lst.add("");
+            return lst;
+        } else if (number == 0 || s.length() == 0) {
+            return lst;
+        }
+        if (s.length() < number) return lst;
+        int maxDigits = Math.min(3, s.length());
+        int highestDigit = s.charAt(0) - '0';
+        if (highestDigit > 2) maxDigits = Math.min(2, s.length());
+        else if (highestDigit == 0) maxDigits = 1;
+
+        for (int i = 1; i <= maxDigits; i++) {
+            String str = s.substring(0, i);
+            int num = Integer.parseInt(str);
+            if (num > 255) continue;
+
+            List<String> rest = restoreIpAddresses(s.substring(i), number - 1);
+            for (String ss : rest) {
+                String ipStr = String.valueOf(num);
+                if (ss.length() > 0) {
+                    ipStr += "." + ss;
+                }
+                lst.add(ipStr);
+            }
+        }
+
+        return lst;
+
+    }
+}
+
+
+/* 
+@Q: Unique Binary Search Trees II
+n@Method: 
+@Complexity: Time O() ???
+@note: 
+*/
+public class Solution {
+    public List<TreeNode> generateTrees(int n) {
+        return generateTrees(1, n);
+    }
+
+    List<TreeNode> generateTrees(int low, int high) {
+        List<TreeNode> lst = new LinkedList<TreeNode>();
+        if (low > high) {
+            returnt lst;
+        }
+
+        for (int i = low; i <= high; i++) {
+
+            List<TreeNode> leftTrees =  generateTrees(low, i - 1);
+            List<TreeNode> rightTrees =  generateTrees(i + 1, high);
+
+            for (TreeNode left : leftTrees) {
+                for (TreeNode right : rightTrees) {
+                    TreeNode head = new TreeNode(i);
+                    head.left = left;
+                    head.right = right;
+                    lst.add(head);
+                }
+            }
+
+
+        }
+
+        return lst;
+    }
+}
