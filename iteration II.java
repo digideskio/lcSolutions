@@ -3023,3 +3023,129 @@ public class Solution {
         return ways[s.length()];
     }
 }
+
+/* 
+@Q: Triangle 
+@Method: dp
+@Complexity: Time O(kn) 
+@note: this one modifies the existing structure
+*/
+public class Solution {
+    public int minimumTotal(List<List<Integer>> triangle) {
+        if (triangle.size() == 0) return 0;
+        if (triangle.size() == 1) return triangle.get(0).get(0);
+        
+        for (int i = triangle.size() - 1; i > 0; i--) {
+            List<Integer> l1 = triangle.get(i - 1);
+            List<Integer> l2 = triangle.get(i);
+            for (int j = 0; j < l1.size(); j++) {
+                l1.set(j, l1.get(j) + Math.min(l2.get(j), l2.get(j + 1)));
+            }
+        }
+        
+        return triangle.get(0).get(0);
+    }
+}
+
+/* 
+@Q: atoi 
+@Method: dp
+@Complexity: Time O(n) 
+@note: 1. empty space 2. symbol 3. non-digit 4. overflow
+*/
+public class Solution {
+      public int atoi(String str) {
+        if (str == null || str.length() == 0) return 0;
+
+        str = str.trim();
+
+        boolean flag = true;
+        if (str.charAt(0) == '+') {
+            str = str.substring(1);
+        } else if (str.charAt(0) == '-') {
+            str = str.substring(1);
+            flag = false;
+        }
+
+
+        long value = 0;
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) <= '9' && str.charAt(i) >= '0') {
+                value = value * 10 + (str.charAt(i) - '0');
+            } else {
+                break;
+            }
+            if (value >= Integer.MAX_VALUE && flag) {
+                return Integer.MAX_VALUE;
+            } else if (-value <= Integer.MIN_VALUE && !flag) {
+                return  Integer.MIN_VALUE;
+            }
+        }
+
+        return (int) (flag ? value : -value);
+    }
+}
+
+/* 
+@Q: Gray Code 
+@Method: 
+@Complexity: Time O(2^n) 
+@note:
+*/
+public class Solution {
+    public List<Integer> grayCode(int n) {
+        Set<Integer> visited = new HashSet<>();
+        return grayCode(0, n, visited);
+    }
+    
+    List<Integer> grayCode(int start, int n, Set<Integer> visited) {
+        List<Integer> lst = new ArrayList<>();
+        
+        lst.add(start);
+        visited.add(start);
+        for (int i = 0; i < n; i++) {
+            int newInt = swap1Bit(start, i);
+            if (!visited.contains(newInt)) {
+                lst.addAll(grayCode(newInt, n, visited));
+                break;
+            }
+        }
+        
+        return lst;
+    }
+    
+    int swap1Bit(int num, int index) {
+        if ((num >> index & 1) != 0) {
+            return (num & ~(1 << index));
+        } else {
+            return (num | 1 << index);
+        }
+    }
+}
+
+/* 
+@Q: Minimum Path Sum 
+@Method: 
+@Complexity: Time O(n^2) 
+@note:
+*/
+public class Solution {
+    public int minPathSum(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        for (int i = n - 2; i >= 0; i--) {
+            grid[m-1][i] += grid[m-1][i+1];
+        }
+        for (int i = m - 2; i >= 0; i--) {
+            grid[i][n-1] += grid[i+1][n-1];
+        }
+        
+        for (int i = m - 2; i >= 0; i--) {
+            for (int j = n - 2; j >= 0; j--) {
+                grid[i][j] += Math.min(grid[i][j+1], grid[i+1][j]);
+            }
+        }
+        
+        return grid[0][0];
+    }
+}
