@@ -2646,3 +2646,285 @@ public class Solution {
         return lst;
     }
 }
+
+
+/* 
+@Q: Permutations I && II
+n@Method: 
+@Complexity: Time O(n^2) 
+@note: 
+*/
+public class Solution {
+    public List<List<Integer>> permute(int[] num) {
+                List<List<Integer>> returnList = new ArrayList<List<Integer>>();
+        returnList.add(new ArrayList<Integer>());
+
+        for (int i = 0; i < num.length; i++) {
+            Set<List<Integer>> currentSet = new HashSet<List<Integer>>();
+            for (List<Integer> l : returnList) {
+                for (int j = 0; j < l.size() + 1; j++) {
+                    ArrayList<Integer> T = new ArrayList<Integer>(l);
+                    T.add(j, num[i]);
+                    currentSet.add(T);
+                }
+            }
+            returnList = new ArrayList<List<Integer>>(currentSet);
+        }
+
+        return returnList;
+    }
+}
+
+
+/* 
+@Q: Intersection of Two Linked Lists 
+n@Method: 
+@Complexity: Time O(n) Space O(1) 
+@note: A solution similiar to cycle linkedlist; 
+*/
+public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        if (headA == null || headB == null) return null;
+        
+        ListNode p = headA;
+        while (p.next != null) {
+            p = p.next;
+        }
+        ListNode tail = p;
+        p.next = headA;
+        
+        ListNode slow = headB;
+        ListNode fast = headB;
+        boolean isIntersected = false;
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (slow == fast) {
+                isIntersected = true;
+                break;
+            }
+        }
+        
+        ListNode intersection = null;
+        if (isIntersected) {
+            fast = headB;
+            while (fast != slow) {
+                fast = fast.next;
+                slow = slow.next;
+            }
+            intersection = fast;
+        }
+        tail.next = null;
+        return intersection;
+    }
+}
+// solution from leetcode
+public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        if (headA == null || headB == null) return null;
+        
+        ListNode pA = headA;
+       ListNode pB = headB;
+       boolean bA = true;
+       boolean bB = true;
+       while (pA != null && pB != null) {
+           if (pA == pB) break;
+           if (bA && pA.next == null) {
+               pA = headB;
+               bA = false;
+           } else {
+               pA = pA.next;
+           }
+           if (bB && pB.next == null) {
+               pB = headA;
+               bB = false;
+           } else {
+               pB = pB.next;
+           }
+       }
+       
+       if (pA == pB && pA != null) return pA;
+       return null;
+    }
+}
+
+/* 
+@Q: Sort List
+n@Method: 
+@Complexity: Time O(n log n) Space O(1) 
+@note: Merge sort
+*/
+public class Solution {
+    public ListNode sortList(ListNode head) {
+        if (head == null || head.next == null) return head;
+        ListNode slow = head;
+        ListNode fast = head;
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        ListNode next = slow.next;
+        slow.next = null;
+        return mergeList(sortList(head), sortList(next));
+    }
+    
+        ListNode mergeList(ListNode a, ListNode b) {
+        ListNode dummyhead = new ListNode(0);
+        ListNode cur = dummyhead;
+        while (a != null && b != null) {
+            if (a.val <= b.val) {
+                cur.next = a;
+                a = a.next;
+            } else {
+                cur.next = b;
+                b = b.next;
+            }
+            cur = cur.next;
+        }
+        cur.next = a != null ? a : b;
+        return dummyhead.next;
+    }
+}
+
+/* 
+@Q: Partition List
+n@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public ListNode partition(ListNode head, int x) {
+        ListNode p1 = new ListNode(0);
+        ListNode p2 = new ListNode(0);
+        ListNode p2Head = p2;
+        ListNode p1Head = p1;
+        ListNode p = head;
+        
+        while (p != null) {
+            ListNode next = p.next;
+            if (p.val < x) {
+                p1.next = p;
+                p1 = p1.next;
+                p1.next = null;
+            } else {
+                p2.next = p;
+                p2 = p2.next;
+                p2.next = null;
+            }
+            p = next;
+        }
+        
+        p1.next = p2Head.next;
+        return p1Head.next;
+    }
+}
+
+/* 
+@Q: Minimum Depth of Binary Tree 
+n@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public int minDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        if (root.left == null && root.right == null) {
+            return 1;
+        }
+        int left = Integer.MAX_VALUE;
+        int right = Integer.MAX_VALUE;
+        if (root.left != null)
+            left = minDepth(root.left);
+        if (root.right != null)
+            right = minDepth(root.right);
+        return Math.min(left, right) + 1;
+ 
+    }
+}
+
+/* 
+@Q: Word Search 
+n@Method: 
+@Complexity: Time O(4^k * n) ???  
+@note: 
+*/
+public class Solution {
+   public boolean exist(char[][] board, String word) {
+        int m = board.length;
+        int n = board[0].length;
+        boolean[][] visited = new boolean[m][n];
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                if(check(board, i, j, word, visited))
+                    return true;
+
+
+        return false;
+    }
+
+    boolean check(char[][] board, int i, int j, String word, boolean[][] visited) {
+        if (visited[i][j]) return false;
+        if (word.length() == 1 && word.charAt(0) == board[i][j]) return true;
+        int m = board.length;
+        int n = board[0].length;
+        if (board[i][j] == word.charAt(0)) {
+            if (word.length() == 1) return true;
+            visited[i][j] = true;
+            if (i > 0) {
+                if (check(board, i - 1, j, word.substring(1), visited)) return true;
+            }
+            if (i < m - 1) {
+                if (check(board, i + 1, j, word.substring(1), visited)) return true;
+            }
+            if (j > 0) {
+                if (check(board, i, j - 1, word.substring(1), visited)) return true;
+            }
+            if (j < n - 1) {
+                if (check(board, i, j + 1, word.substring(1), visited)) return true;
+            }
+            visited[i][j] = false;
+        }
+
+        return false;
+    }
+}
+
+/* 
+@Q: Evaluate Reverse Polish Notation 
+n@Method: 
+@Complexity: Time O(n) ???  
+@note: 
+*/
+public class Solution {
+    public int evalRPN(String[] tokens) {
+        Stack<Integer> stack = new Stack<>();
+        for (int i = 0; i < tokens.length; i++) {
+            int a = 0, b = 0;
+            switch (tokens[i]) {
+                case "+":
+                    stack.push(stack.pop() + stack.pop());
+                    break;
+                case "/":
+                    b = stack.pop();
+                    a = stack.pop();
+                    stack.push(a / b);
+                    break;
+                case "-":
+                    b = stack.pop();
+                    a = stack.pop();
+                    stack.push(a - b);
+                    break;
+                case "*":
+                    b = stack.pop();
+                    a = stack.pop();
+                    stack.push(a * b);
+                    break;
+                default:
+                    stack.push(Integer.parseInt(tokens[i]));
+            }
+        }
+        return stack.isEmpty() ? 0 : stack.pop();
+    }
+}
