@@ -2894,8 +2894,8 @@ public class Solution {
 /* 
 @Q: Evaluate Reverse Polish Notation 
 n@Method: 
-@Complexity: Time O(n) ???  
-@note: 
+@Complexity: Time O(n) 
+@note: String can be in switch case followed by jdk 1.7
 */
 public class Solution {
     public int evalRPN(String[] tokens) {
@@ -2926,5 +2926,100 @@ public class Solution {
             }
         }
         return stack.isEmpty() ? 0 : stack.pop();
+    }
+}
+
+/* 
+@Q: Find Minimum in Rotated Sorted Array II 
+n@Method: 
+@Complexity: Time O(log n) 
+@note: 
+*/
+public class Solution {
+    public int findMin(int[] num) {
+        if (num.length == 1) return num[0];
+        return findMin(num, 0, num.length - 1);
+    }
+    
+    int findMin(int[] num, int low, int high) {
+        if (low == high) return num[low];
+        
+        int mid = (low + high) / 2;
+        if (num[mid] < num[high]) {
+            return findMin(num, low, mid);
+        } else if (num[mid] > num[high]) {
+            return findMin(num, mid + 1, high);
+        } else {
+            if (num[mid] != num[low]) {
+                return findMin(num, low, mid);
+            } else {
+                return Math.min(findMin(num, low, mid), findMin(num, mid + 1, high));
+            }
+        }
+        
+        
+    }
+}
+
+/* 
+@Q: Interleaving String 
+@Method: dp
+@Complexity: Time O(n^2) 
+@note: 
+*/
+public class Solution {
+    public boolean isInterleave(String s1, String s2, String s3) {
+        if (s1.length() + s2.length() != s3.length()) return false;
+        boolean[][] dp = new boolean[s1.length()+1][s2.length()+1];
+        dp[0][0] = true;
+        for (int i = 1; i <= s2.length(); i++) {
+            if (s2.charAt(i - 1) == s3.charAt(i - 1) && dp[0][i-1]) {
+                dp[0][i] = true;
+            }
+        }
+        for (int i = 1; i <= s1.length(); i++) {
+            if (s1.charAt(i - 1) == s3.charAt(i - 1) && dp[i-1][0]) {
+                dp[i][0] = true;
+            }
+        }
+        for (int i = 1; i <= s1.length(); i++) {
+            for (int j = 1; j <= s2.length(); j++) {
+                if ((s1.charAt(i - 1) == s3.charAt(i + j - 1) && dp[i-1][j])
+                    || ((s2.charAt(j - 1) == s3.charAt(i + j - 1) && dp[i][j-1]))) {
+                    dp[i][j] = true;
+                }
+            }
+        }
+        return dp[s1.length()][s2.length()];
+    }
+}
+
+/* 
+@Q: Decode Ways 
+@Method: dp
+@Complexity: Time O(n) 
+@note: carefull with corner cases
+*/
+public class Solution {
+    public int numDecodings(String s) {
+        if (s.length() == 0 || s.charAt(0) == '0') return 0;
+        int[] ways = new int[s.length()+1];
+        ways[0] = 1;
+        ways[1] = 1;
+        for (int i = 2; i <= s.length(); i++) {
+            if (s.charAt(i - 1) != '0') {
+                int num = (s.charAt(i - 2) - '0') * 10 + s.charAt(i - 1) - '0';
+                if (num > 10 && num < 27) {
+                    ways[i] = ways[i-1] + ways[i-2];
+                } else {
+                    ways[i] = ways[i-1];
+                }
+            } else {
+                if (s.charAt(i - 2) == '1' || s.charAt(i - 2) == '2') {
+                    ways[i] = ways[i-2];    
+                } 
+            }
+        }
+        return ways[s.length()];
     }
 }
