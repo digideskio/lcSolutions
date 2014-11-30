@@ -3126,26 +3126,178 @@ public class Solution {
 /* 
 @Q: Minimum Path Sum 
 @Method: 
-@Complexity: Time O(n^2) 
+@Complexity: Time O(n^2) Space(n) extra (could be O(1) if allowing modification on input data) 
 @note:
 */
 public class Solution {
     public int minPathSum(int[][] grid) {
         int m = grid.length;
         int n = grid[0].length;
+        int[] dp = new int[n];
+        dp[n-1] = grid[m-1][n-1];
         for (int i = n - 2; i >= 0; i--) {
-            grid[m-1][i] += grid[m-1][i+1];
+            dp[i] = grid[m-1][i] + dp[i+1];
         }
-        for (int i = m - 2; i >= 0; i--) {
-            grid[i][n-1] += grid[i+1][n-1];
-        }
+    
         
         for (int i = m - 2; i >= 0; i--) {
+            dp[n-1] += grid[i][n-1];
+            int last = dp[n-1];
+            int cur = 0;
             for (int j = n - 2; j >= 0; j--) {
-                grid[i][j] += Math.min(grid[i][j+1], grid[i+1][j]);
+                // grid[i][j] += Math.min(grid[i][j+1], grid[i+1][j]);
+                cur = grid[i][j] + Math.min(dp[j], last);
+                dp[j+1] = last;
+                last = cur;
             }
+            dp[0] = last;
+
         }
         
         return grid[0][0];
     }
 }
+
+
+
+/* 
+@Q: Insertion Sort List 
+@Method: 
+@Complexity: Time O(n)
+@note: carefull with insertion, always nullify the next node of the node inserted
+*/
+public class Solution {
+    public ListNode insertionSortList(ListNode head) {
+        ListNode dummy = new ListNode(Integer.MIN_VALUE);
+        ListNode p = head;
+        while (p != null) {
+            ListNode next = p.next;
+            p.next = null;
+            insert(dummy, p);
+            p = next;
+        }
+        return dummy.next;
+    }
+    
+    void insert(ListNode head, ListNode node) {
+        ListNode p = head;
+        while (p.next != null) {
+            if (p.next.val > node.val) {
+                ListNode remains = p.next;
+                p.next = node;
+                node.next = remains;
+                return;
+            }
+            p = p.next;
+        }
+        p.next = node;
+    }
+}
+
+
+/* 
+@Q: A String Replacement Problem 
+@Method: 
+@Complexity: Time O(n)
+@note: 
+*/
+class Solution {
+    String convert(char[] str, char[] pattern) {
+        int p1 = 0;
+        int p2 = 0;
+
+        while (p2 < str.length) {
+            if (isMatch(str, p2, pattern)) {
+                if (p1 == 0 || str[p1-1] != 'x') {
+                    str[p1] = 'x';
+                    p1++;
+                }
+                p2 += pattern.length;
+            } else {
+                str[p1] = str[p2];
+                p1++;
+                p2++;
+            }
+        }
+        return new String(str).substring(0, p1);
+    }
+
+    boolean isMatch(char[] str, int start, char[] pattern) {
+        for (int i = 0; i < pattern.length; i++) {
+            if (start + i >= str.length || str[start+i] != pattern[i]) return false;
+        }
+        return true;
+    }
+
+}
+// a slightly better solution
+class Solution {
+    String convert(char[] str, char[] pattern) {
+        int p1 = 0;
+        int p2 = 0;
+
+        while (p2 < str.length) {
+            boolean isMatched = false;
+            while (isMatch(str, p2, pattern)) {
+                isMatched = true;
+                p2 += pattern.length;
+            }
+
+            if (isMatched) {
+                str[p1++] = 'X';
+            } else {
+                str[p1++] = str[p2++];
+            }
+
+        }
+        return new String(str).substring(0, p1);
+    }
+
+    boolean isMatch(char[] str, int start, char[] pattern) {
+        for (int i = 0; i < pattern.length; i++) {
+            if (start + i >= str.length || str[start+i] != pattern[i]) return false;
+        }
+        return true;
+    }
+
+}
+
+
+/* 
+@Q: Candy
+@Method: 
+@Complexity: Time O(n) one pass
+@note: 
+*/
+public class Solution {
+    public int candy(int[] ratings) {
+        if (ratings.length < 2) return ratings.length;
+        int pre = 0;
+        int cur = 1;
+        int len = 0;
+        int total = 1;
+        for (int i = 1; i < ratings.length; i++) {
+            if (ratings[i] > ratings[i-1]) {
+                len = 0;
+                cur++;
+                total += cur;
+                pre = cur;
+            } else if (ratings[i] == ratings[i-1]) {
+                len = 0;
+                cur = 1;
+                total += cur;
+                pre = cur;
+            } else {
+                len++;
+                if (pre <= len) {
+                    total++;
+                }
+                total += len;
+                cur = 1;
+            }
+        }
+
+        return total;
+    }
+}
+
