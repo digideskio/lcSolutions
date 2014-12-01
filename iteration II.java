@@ -3301,3 +3301,223 @@ public class Solution {
     }
 }
 
+
+/* 
+@Q: Merge Two Sorted Lists
+@Method: 
+@Complexity: Time O(n) one pass
+@note: 
+*/
+public class Solution {
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        ListNode dummyHead = new ListNode(0);
+        ListNode dummy = dummyHead;
+        while (l1 != null && l2 != null) {
+            if (l1.val < l2.val) {
+                dummy.next = l1;
+                dummy = dummy.next;
+                l1 = l1.next;
+                dummy.next = null;
+            } else {
+                dummy.next = l2;
+                dummy = dummy.next;
+                l2 = l2.next;
+                dummy.next = null;
+            }
+        }
+        dummy.next = l1 != null ? l1 : l2;
+        return dummyHead.next;
+    }
+}
+
+/* 
+@Q: Search a 2D Matrix
+@Method: 
+@Complexity: Time O(log n) 
+@note: 
+*/
+public class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        
+        return searchMatrix(matrix, target, 0, matrix.length * matrix[0].length - 1);
+    }
+    
+    public boolean searchMatrix(int[][] matrix, int target, int low, int high) {
+        if (high < low) {
+            return false;
+        }
+        
+        int mid = (low + high) / 2;
+        int row = mid / matrix[0].length;
+        int col = mid % matrix[0].length;
+        if (matrix[row][col] == target) {
+            return true;
+        } else if (matrix[row][col] > target) {
+            return searchMatrix(matrix, target, low, mid - 1);
+        } else {
+            return searchMatrix(matrix, target, mid + 1, high);
+        }
+    }
+    
+}
+
+/* 
+@Q: Longest Valid Parentheses 
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public int longestValidParentheses(String s) {
+        Stack<Integer> stack = new Stack<>();
+        int cur = 0;
+        int max = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '(') {
+                stack.push(cur);
+                cur = 0;
+            } else {
+                if (!stack.isEmpty()) {
+                    cur += stack.pop() + 2;
+                } else {
+                    cur = 0;
+                }
+            }
+            max = Math.max(max, cur);
+        }
+        
+        return max;
+    }
+}
+
+/* 
+@Q: Substring with Concatenation of All Words 
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+ public List<Integer> findSubstring(String S, String[] L)
+    {
+        final List<Integer> result = new ArrayList<Integer>();
+        if (L.length > 0 && L[0].length() > 0 && S.length() >= L.length * L[0].length())
+        {
+            final Map<String, Integer> dict = new HashMap<String, Integer>();
+
+            for (final String str : L)
+            {
+                dict.put(str, (dict.containsKey(str) ? dict.get(str) : 0) + 1);
+            }
+
+            final int len = L[0].length();
+            // We only start from 0 ~ len - 1.
+            for (int i = 0; i < len; ++i)
+            {
+                // This map is used to store the remained word count in the directory.
+                Map<String, Integer> map = new HashMap<String, Integer>(dict);
+                // Use queue to store current sequence. All the words in queue also should be in map.
+                final Queue<String> queue = new LinkedList<String>();
+                // Every time add one word.
+                for (int j = i; (j + len) <= S.length(); j += len)
+                {
+                    final String str = S.substring(j, j + len);
+                    // If this word is in directory.
+                    if (dict.containsKey(str))
+                    {
+                        // Add the word into the sequence.
+                        queue.add(str);
+                        // We already have enough such word in the sequence so we need to move the starting point to next such word.
+                        if (map.get(str) == 0)
+                        {
+                            while (!str.equals(queue.element()))
+                            {
+                                final String item = queue.remove();
+                                map.put(item, map.get(item) + 1);
+                            }
+
+                            queue.remove();
+                        }
+                        else
+                        {
+                            map.put(str, map.get(str) - 1);
+                        }
+
+                        // There are enough words in the sequence.
+                        if (queue.size() == L.length)
+                        {
+                            result.add(j - len * (L.length - 1));
+                        }
+                    }
+                    else
+                    {
+                        queue.clear();
+                        map = new HashMap<String, Integer>(dict);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+}
+
+
+/* 
+@Q: reverse a word in string in place
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+class Solution {
+    public String reverseWords(String s) {
+        char[] str = s.trim().toCharArray();
+        if (str.length < 2) return new String(str);
+        swapWord(str, 0, str.length - 1);
+        int len = clearSpace(str);
+        int low = 0, high = 0;
+
+        while (high < len) {
+            boolean needSwap = false;
+            while (high < str.length && str[high] != ' ') {
+                needSwap = true;
+                high++;
+            }
+            if (needSwap) {
+                swapWord(str, low, high - 1);
+                high++;
+                low = high;
+            }
+        }
+
+        return new String(str).substring(0, len);
+    }
+
+    int clearSpace(char[] array) {
+        int slow = 0, fast = 0;
+        while (fast < array.length) {
+            boolean isSpace = false;
+            while (array[fast] == ' ') {
+                isSpace = true;
+                fast++;
+            }
+            if (isSpace) {
+                array[slow++] = ' ';
+            } else {
+                array[slow++] = array[fast++];
+            }
+        }
+        return slow;
+    }
+
+    void swapWord(char[] array, int start, int end) {
+        while (start < end) {
+            swap(array, start++, end--);
+        }
+    }
+
+    void swap(char[] array, int i, int j) {
+        char tmp = array[i];
+        array[i] = array[j];
+        array[j] = tmp;
+    }
+}
