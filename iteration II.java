@@ -3521,3 +3521,578 @@ class Solution {
         array[j] = tmp;
     }
 }
+
+/* 
+@Q: Max Points on a Line 
+@Method: 
+@Complexity: Time O(n^2) 
+@note: 
+*/
+public class Solution {
+    public int maxPoints(Point[] points) {
+        if(points.length <= 2)
+            return points.length;
+
+        int n = points.length;
+        int globalMax = 2;
+        for(int i = 0; i < n - 1; i++){
+            HashMap<Double, Integer> mp = new HashMap<Double, Integer>();
+            int dup = 0;
+            for(int j = i + 1; j < n; j++){
+                int dy = points[j].y - points[i].y;
+                int dx = points[j].x - points[i].x;
+                double k; 
+                if(dy == 0 && dx == 0){
+                    dup++;
+                    continue;
+                }
+                else if(dx == 0)
+                    k = Double.MAX_VALUE;
+                else
+                    k = dy / (double)dx + 0.0;  
+            
+
+                if(!mp.containsKey(k))
+                    mp.put(k, 2);
+                else
+                    mp.put(k, mp.get(k)+1);
+            }
+            int localMax = 1;
+            for(Map.Entry<Double, Integer> entry : mp.entrySet()){
+                double key = entry.getKey();
+                if(mp.get(key) > localMax)
+                    localMax = mp.get(key);
+            }
+            localMax += dup;
+            if(localMax > globalMax)
+                globalMax = localMax;
+        }
+
+        return globalMax;
+    }
+  
+}
+
+
+
+/* 
+@Q: Gas Station 
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public int canCompleteCircuit(int[] gas, int[] cost) {
+        int n = gas.length;
+        int total = 0, sum = 0;
+        int start = 0;
+        for (int i = 0; i < n; i++) {
+            int diff = gas[i] - cost[i];
+            total += diff;
+            sum += diff;
+            
+            if (sum < 0) {
+                sum = 0;
+                start =  (i + 1) % n;
+            }
+        }
+        if (total < 0) return -1;
+        else return start;
+    }
+}
+
+/* 
+@Q: Reverse Nodes in k-Group 
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if (head == null || head.next == null) return head;
+        if (k < 2) return head;
+        
+        int cnt = k - 1;
+        ListNode p = head;
+        while (p != null && cnt > 0) {
+            p = p.next;
+            cnt--;
+        }
+        
+        if (p == null) return head;
+        ListNode rest = p.next;
+        p.next = null;
+        ListNode tail = head;
+        head = reverse(head);
+        tail.next = reverseKGroup(rest, k);
+        
+        return head;
+    }
+    
+    ListNode reverse(ListNode head) {
+        ListNode p = head;
+        if (head == null || head.next == null) return head;
+        
+        ListNode last = null;
+        while (p != null) {
+            ListNode next = p.next;
+            if (last != null) {
+                p.next = last;
+            } else {
+                p.next = null;
+            }
+            last = p;
+            p = next;
+        }
+        
+        return last;
+    }
+}
+
+
+/* 
+@Q: Single Number II 
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public int singleNumber(int[] A) {
+        int[] bits = new int[32];
+
+
+        int single = 0;
+
+        for (int i = 0; i < 32; i++) {
+            for (int j = 0; j < A.length; j++) {
+                if ((A[j] >> i & 1) != 0) {
+                    bits[i]++;
+                }
+            }
+            if (bits[i] % 3 != 0) {
+                single |= (1 << i);
+            }
+        }
+
+        return single;
+    }
+}
+
+/* 
+@Q: Palindrome Partitioning 
+@Method: 
+@Complexity: Time O(n!) 
+@note: 
+*/
+public class Solution {
+    HashMap<String, List<List<String>>> map = new HashMap<String, List<List<String>>>();
+    public List<List<String>> partition(String s) {
+        if (map.containsKey(s)) return map.get(s);
+        List<List<String>> lst = new LinkedList<List<String>>();
+        if (s.length() == 0) {
+            lst.add(Collections.<String>emptyList());
+        }
+        
+        int index = 1;
+        while (index <= s.length()) {
+            String str = s.substring(0, index);
+            if (isValid(str)) {
+                
+                List<List<String>> rest = partition(s.substring(index));
+                for (List<String> listRest : rest) {
+                    List<String> newList = new LinkedList<String>(listRest);
+                    newList.add(0, str);
+                    lst.add(newList);
+                }
+                
+                
+            }
+            index++;
+        }
+        map.put(s, lst);
+        
+        return lst;
+    }
+    
+    boolean isValid(String s) {
+        String reversed = new StringBuffer(s).reverse().toString();
+        return reversed.equals(s);
+    }
+}
+
+
+/* 
+@Q: Sum Root to Leaf Numbers 
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public int sumNumbers(TreeNode root) {
+        if (root == null) return 0;
+        return sumNumbers(root, 0);
+    }
+    
+    int sumNumbers(TreeNode root, int sum) {
+        if (root == null) return 0;
+        sum = sum * 10 + root.val;
+        if (root.left == null && root.right == null) return sum;
+        return sumNumbers(root.left, sum) + sumNumbers(root.right, sum);
+    }
+}
+
+
+/* 
+@Q: Word Ladder
+@Method: 
+@Complexity: Time O(26^k) 
+@note: 
+*/
+public class Solution {
+    public int ladderLength(String start, String end, Set<String> dict) {
+         int steps = 1;
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        Queue<String> queue = new LinkedList<String>();
+
+        queue.add(start);
+        map.put(start, 1);
+
+        while (!queue.isEmpty()) {
+            String w = queue.poll();
+            for (int i = 0; i < w.length(); i++) {
+                StringBuffer sb = new StringBuffer(w);
+                for (char c = 'a'; c <= 'z'; c++) {
+                    if (c != w.charAt(i)) {
+                        sb.setCharAt(i, c);
+                        String word = sb.toString();
+                        if (word.equals(end)) return map.get(w) + 1;
+                        if (dict.contains(word) && !map.containsKey(word)) {
+                            map.put(word, map.get(w) + 1);
+                            queue.add(word);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        return 0;
+    }
+}
+
+/* 
+@Q: Best Time to Buy and Sell Stock III 
+@Method: 
+@Complexity: Time O(n)  3 passes
+@note: 
+*/
+public class Solution {
+   public int maxProfit(int[] prices) {
+        int[] before = new int[prices.length];
+        int[] after = new int[prices.length];
+
+        int min = Integer.MAX_VALUE;
+        int profit = 0;
+        for (int i = 0; i < prices.length; i++) {
+            int p = prices[i] - min;
+            profit = Math.max(profit, p);
+            if (prices[i] < min) {
+                min = prices[i];
+            }
+            before[i] = profit;
+        }
+
+        int max = 0;
+        profit = 0;
+        for (int i = prices.length - 1; i >= 0; i--) {
+            int p = max - prices[i];
+            profit = Math.max(profit, p);
+            if (prices[i] > max) {
+                max = prices[i];
+            }
+            after[i] = profit;
+        }
+
+        int maxProf = 0;
+        for (int i = 0; i < prices.length; i++) {
+            maxProf = Math.max(before[i] + after[i], maxProf);
+        }
+        return maxProf;
+    }
+}
+
+
+/* 
+@Q: Pascal's Triangle
+@Method: 
+@Complexity: Time O(n^2)  
+@note: 
+*/
+public class Solution {
+    public List<List<Integer>> generate(int numRows) {
+        List<List<Integer>> lst = new ArrayList<>();
+        List<Integer> l = new ArrayList<>();
+        while (numRows > 0) {
+            for (int i = l.size() - 1; i > 0; i--) {
+                l.set(i, l.get(i) + l.get(i - 1));
+            }
+            l.add(1);
+            lst.add(new ArrayList<Integer>(l));
+            numRows--;
+        }
+        return lst;
+    }
+}
+
+
+/* 
+@Q: Balanced Binary Tree
+@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public boolean isBalanced(TreeNode root) {
+        int depth = getDepth(root);
+        if (depth == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    public int getDepth(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+        
+        int left = getDepth(node.left);
+        if (left == -1) return -1;
+        int right = getDepth(node.right);
+        if (right == -1) return -1;
+        
+        int diff = Math.abs(left - right);
+        if (diff > 1) {
+            return -1;
+        }
+        return Math.max(left, right) + 1;
+        
+    }
+}
+
+/* 
+@Q: Flatten Binary Tree to Linked List 
+@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public void flatten(TreeNode root) {
+        TreeNode p = root;
+        TreeNode last = null;
+        Stack<TreeNode> stack = new Stack<>();
+        
+        while (!stack.isEmpty() || p != null) {
+            if (p != null) {
+                stack.push(p);
+                p = p.right;
+            } else {
+                TreeNode node = stack.peek();
+                if (node.left != null && node.left != last) {
+                    p = node.left;
+                } else {
+                    // visit node
+                    node.left = null;
+                    node.right = last;
+                    last = stack.pop();
+                    
+                }
+            }
+        }
+    }
+}
+
+/* 
+@Q: quicksort and mergesort; partition application to findkth
+@Method: 
+@Complexity: Time O(n logn) for sorting (O(n^2) worst case for quicksort) and O(n) for partition  
+@note: 
+*/
+class Solution {
+    public int findKth(int[] array, int k, int low, int high) {
+        if (low == high) return array[low];
+        if (low < high) {
+            int pivotIndex = partition(array, low, high);
+            if (pivotIndex == k - 1) return array[pivotIndex];
+            else if (pivotIndex > k - 1) return findKth(array, k, low, pivotIndex - 1);
+            else return findKth(array, k, pivotIndex + 1, high);
+        }
+        return -1;
+    }
+    public void quickSort(int[] array, int low, int high) {
+        if (low < high) {
+            int pivot = partition(array, low, high);
+            quickSort(array, low, pivot - 1);
+            quickSort(array, pivot + 1, high);
+        }
+    }
+
+    int partition(int[] array, int low, int high) {
+        int pivot = array[(low + high) / 2];
+        while (low <= high) {
+            while (array[low] < pivot) low++;
+            while (array[high] > pivot) high--;
+
+            if (low <= high) {
+                int tmp = array[low];
+                array[low] = array[high];
+                array[high] = tmp;
+                low++;
+                high--;
+            }
+        }
+        return low;
+    }
+
+    public void mergeSort(int[] array, int low, int high) {
+        if (low < high) {
+            int mid = (low + high) / 2;
+            mergeSort(array, low, mid);
+            mergeSort(array, mid + 1, high);
+            merge(array, low, mid, high);
+        }
+
+    }
+
+    void merge(int[] array, int low, int mid, int high) {
+        int[] helper = new int[array.length];
+        for (int i = low; i <= high; i++) {
+            helper[i] = array[i];
+        }
+
+        int leftHalf = low;
+        int rightHalf = mid + 1;
+        int start = low;
+        while (leftHalf <= mid && rightHalf <= high) {
+            if (helper[leftHalf] < helper[rightHalf]) {
+                array[start++] = helper[leftHalf++];
+            } else {
+                array[start++] = helper[rightHalf++];
+            }
+        }
+        while (leftHalf <= mid) {
+            array[start++] = helper[leftHalf++];
+        }
+    }
+}
+
+
+
+/* 
+@Q: Linked List Cycle 
+@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public boolean hasCycle(ListNode head) {
+        if (head == null || head.next == null) return false;
+        ListNode slow = head;
+        ListNode fast = head;
+        do {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (slow == fast) return true;
+        } while (fast != null && fast.next != null);
+        
+        return false;
+    }
+}
+
+
+/* 
+@Q: Convert Sorted List to Binary Search Tree
+@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public TreeNode sortedListToBST(ListNode head) {
+        if (head == null) return null;
+        ListNode preMid = findPreMid(head);
+        ListNode mid = preMid.next;
+        preMid.next = null;
+        ListNode rest = mid.next;
+        TreeNode node = new TreeNode(mid.val);
+        if (mid != head) {
+            node.left = sortedListToBST(head);
+        }
+        node.right = sortedListToBST(rest);
+        return node;
+
+    }
+
+    ListNode findPreMid(ListNode node) {
+        ListNode slow = new ListNode(0);
+        slow.next = node;
+        ListNode fast = node;
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return slow;
+    }
+}
+
+/* 
+@Q: Jump Game II
+@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public int jump(int[] A) {
+        if (A.length == 0) return 0;
+        int edge = 0;
+        int minStep = 0;
+        int maxReach = A[0];
+        for (int i = 1; i < A.length; i++) {
+            if (i > edge) {
+               minStep++;
+               edge = maxReach;
+               if (edge >= A.length - 1) return minStep;
+            }
+            maxReach = Math.max(A[i] + i, maxReach);
+        }
+        return minStep;
+    }
+}
+
+/* 
+@Q: Validate Binary Search Tree
+@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public boolean isValidBST(TreeNode root) {
+        if (root == null) return true;
+        
+        TreeNode p = root;
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        Integer pre = null;
+        while (!stack.isEmpty() || p != null) {
+            if (p != null) {
+                stack.push(p);
+                p = p.left;
+                
+            } else {
+                p = stack.pop();
+                if (pre != null && pre >= p.val) return false;
+                pre = p.val;
+                p = p.right;
+            }
+        }
+        return true;
+    }
+}
