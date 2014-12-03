@@ -4096,3 +4096,136 @@ public class Solution {
         return true;
     }
 }
+
+
+/* 
+@Q: Combinations
+@Method: 
+@Complexity: Time O(n!)  
+@note: 
+*/
+public class Solution {
+    public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> lst = new ArrayList<>();
+        if (k == 0) {
+            lst.add(Collections.<Integer>emptyList());
+        }
+        
+        for (int i = n; i > 0; i--) {
+            List<List<Integer>> rest = combine(i - 1, k - 1);
+            for (List<Integer> l : rest) {
+                List<Integer> nL = new ArrayList<>(l);
+                nL.add(i);
+                lst.add(nL);
+            }
+        }
+        
+        return lst;
+    }
+}
+
+/* 
+@Q: Plus One 
+@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public int[] plusOne(int[] digits) {
+        int carry = 1;
+        for (int i = digits.length - 1; i >= 0; i--) {
+            int num = digits[i] + carry;
+            digits[i] = num % 10;
+            carry = num / 10;
+        }
+        if (carry != 0) {
+            int[] toReturn = new int[digits.length+1];
+            for (int i = 0; i < digits.length; i++) {
+                toReturn[i+1] = digits[i];
+            }
+            toReturn[0] = 1;
+            return toReturn;
+        } else {
+            return digits;
+        }
+    }
+}
+
+
+/* 
+@Q: Unique Paths II 
+@Method: 
+@Complexity: Time O(n^2) Space(n^2) (could be linear but not in the mood...)  
+@note: 
+*/
+public class Solution {
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        int m = obstacleGrid.length;
+        int n = obstacleGrid[0].length;
+        int[][] map = new int[m][n];
+        if (obstacleGrid[m-1][n-1] == 1) return 0;
+        map[m-1][n-1] = 1;
+        for (int i = n - 2; i >= 0; i--) {
+            if (checkValid(obstacleGrid, m - 1, i))
+                map[m-1][i] = map[m-1][i+1];
+        }
+        for (int i = m - 2; i >= 0; i--) {
+            if (checkValid(obstacleGrid, i, n - 1))
+                map[i][n-1] = map[i+1][n-1];
+        }
+
+        for (int i = m - 2; i >= 0; i--) {
+            for (int j = n - 2; j >= 0; j--) {
+                if (checkValid(obstacleGrid, i, j)) {
+                    map[i][j] = map[i+1][j] + map[i][j+1];
+                }
+            }
+        }
+        
+        return map[0][0];
+
+    }
+    public boolean checkValid(int[][] obstacleGrid, int m, int n) {
+        return obstacleGrid[m][n] == 0 ? true : false;
+    }
+}
+
+/* 
+@Q: Rotate List
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+ public ListNode rotateRight(ListNode head, int n) {
+        int len = 0;
+        ListNode p = head;
+        while (p != null) {
+            p = p.next;
+            len++;
+        }
+
+        if (len <= 1) return head;
+
+        n = n % len;
+        
+        if (n == 0) return head;
+
+        int cnt = n;
+        ListNode fast = head;
+        while (cnt > 0) {
+            fast = fast.next;
+            cnt--;
+        }
+        ListNode slow = head;
+        
+        while (fast.next != null) {
+            fast = fast.next;
+            slow = slow.next;
+        }
+        ListNode returnHead = slow.next;
+        slow.next = null;
+        fast.next = head;
+        return returnHead;
+    }
+}
