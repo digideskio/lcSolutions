@@ -175,3 +175,51 @@ public class Solution {
         return left;
     }
 }
+
+
+
+void cashWays(int value, int[] bills, int index) {
+    List<List<Integer>> lst = new ArrayList<>();
+    
+    if (value == 0) {
+        List<Integer> oneWay = new LinkedList<>();
+        lst.add(oneWay);
+        return lst;
+    } 
+    
+    if (index == bills.length) return lst;
+    
+    for (int i = 0; i * bills[index] <= value; i++) {
+        List<List<Integer>> rest = cashWays(value - i * bills[index], bills, index + 1);
+        for (List<Integer> oneWay : rest) {
+            List<Integer> newWay = new LinkedList<>(oneWay);
+            for (int j = 0; j < i; j++) {
+                newWay.add(0, bills[index]);
+            }
+            lst.add(newWay);
+        }
+    }
+    
+    return lst;
+}
+
+
+
+void moveZeros(int[] arr) {
+    if (arr.length == 0) return;
+    
+    int start = 0;
+    for (int i = 0; i < arr.length; i++) {
+        if (arr[i] != 0) {
+            swap(arr, start, i);
+            start++;
+        } 
+    }
+}
+
+void swap(int[] arr, int i, int j) {
+    if (i == j) return;
+    int tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+}

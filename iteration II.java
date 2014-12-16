@@ -1098,6 +1098,23 @@ public class Solution {
         else return sqrt(x, mid + 1, end);
     }
 }
+public class Solution {
+    public int sqrt(int x) {
+        if (x <= 0) return 0;
+        return sqrt(x, 1, x);
+    }
+    
+    int sqrt(int x, int start, int end) {
+        while (start <= end) {
+            int mid = start + (end - start) / 2;
+            if (mid > Integer.MAX_VALUE / mid || mid * mid > x) end = mid - 1;
+            else if (mid * mid == x) return mid;
+            else start = mid + 1;
+        }
+        return end;
+    }
+}
+
 
 /* 
 @Q: Remove Nth Node From End of List 
@@ -3157,7 +3174,26 @@ public class Solution {
         return grid[0][0];
     }
 }
-
+public class Solution {
+    public int minPathSum(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        for (int i = n - 2; i >= 0; i--) {
+            grid[m-1][i] += grid[m-1][i+1];
+        }
+        for (int i = m - 2; i >= 0; i--) {
+            grid[i][n-1] += grid[i+1][n-1];
+        }
+        
+        for (int i = m - 2; i >= 0; i--) {
+            for (int j = n - 2; j >= 0; j--) {
+                grid[i][j] += Math.min(grid[i][j+1], grid[i+1][j]);
+            }
+        }
+        
+        return grid[0][0];
+    }
+}
 
 
 /* 
