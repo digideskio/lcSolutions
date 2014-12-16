@@ -3985,6 +3985,33 @@ class Solution {
         }
     }
 }
+class Solution {
+    public void quickSort(int[] array, int low, int high) {
+        int pivotIdx = partition(array, low, high);
+        if (low < pivotIdx - 1)
+            quickSort(array, low, pivotIdx - 1);
+        if (high > pivotIdx)
+            quickSort(array, pivotIdx + 1, high);
+
+    }
+
+    int partition(int[] array, int low, int high) {
+        int pivot = array[(low + high) / 2];
+        while (low <= high) {
+            while (array[low] < pivot) low++;
+            while (array[high] > pivot) high--;
+
+            if (low <= high) {
+                int tmp = array[low];
+                array[low] = array[high];
+                array[high] = tmp;
+                low++;
+                high--;
+            }
+        }
+        return low;
+    }
+}
 
 
 
