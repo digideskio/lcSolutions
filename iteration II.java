@@ -478,8 +478,8 @@ public class Solution {
     }
     
     int maxSum(TreeNode root) {
-        if (root == null) return 0;
-        
+        if (root == null) return 0
+ ;       
         int left = Math.max(maxSum(root.left), 0);
         int right = Math.max(maxSum(root.right), 0);
         int rootMax = Math.max(Math.max(left, right), left + right) + root.val;
@@ -870,7 +870,7 @@ public class Solution {
                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
                    minDis[i][j] = minDis[i-1][j-1];
                } else {
-                   minDis[i][j] = Math.min(minDis[i][j-1], minDis[i-1][j], minDis[i-1][j-1]) + 1;
+                   minDis[i][j] = Math.min(Math.min(minDis[i][j-1], minDis[i-1][j-1]), minDis[i-1][j]) + 1;
                }
            }
        }
@@ -1098,6 +1098,23 @@ public class Solution {
         else return sqrt(x, mid + 1, end);
     }
 }
+public class Solution {
+    public int sqrt(int x) {
+        if (x <= 0) return 0;
+        return sqrt(x, 1, x);
+    }
+    
+    int sqrt(int x, int start, int end) {
+        while (start <= end) {
+            int mid = start + (end - start) / 2;
+            if (mid > Integer.MAX_VALUE / mid || mid * mid > x) end = mid - 1;
+            else if (mid * mid == x) return mid;
+            else start = mid + 1;
+        }
+        return end;
+    }
+}
+
 
 /* 
 @Q: Remove Nth Node From End of List 
@@ -1150,8 +1167,8 @@ public class Solution {
             List<TreeNode> rightTrees =  generateTrees(i + 1, high);
 
             for (TreeNode left : leftTrees) {
-                for (TreeNode right : rightTrees) {
-                    TreeNode head = new TreeNode(i);
+                for (TreeNode right : rightTrees) 
+{                    TreeNode head = new TreeNode(i);
                     head.left = left;
                     head.right = right;
                     lst.add(head);
@@ -2434,40 +2451,1950 @@ public class Solution {
     }
 }
 
+/* 
+@Q: Distinct Subsequences 
+n@Method: 
+@Complexity: Time O(n^2) Space(n) 
+@note: 
+*/
+public class Solution {
+    public int numDistinct(String S, String T) {
+        if (S.length() < T.length()) return 0;
+        
+        int[] table = new int[S.length()+1];
+        for (int i = 0; i <= S.length(); i++) {
+            table[i] = 1;
+        }
+        int last = 0;
+        int cur = 0;
+        for (int i = 1; i <= T.length(); i++) {
+            last = 0;
+            for (int j = 1; j <= S.length(); j++) {
+                if (S.charAt(j-1) == T.charAt(i-1)) {
+                    cur = last + table[j-1];
+                    //table[i][j] = table[i-1][j-1] + table[i][j-1];
+                } else {
+                    //table[i][j] = table[i][j-1];
+                    cur = last;
+                }
+                
+                table[j-1] = last;
+                last = cur;
+            }
+            table[S.length()] = cur;
+        }
+        
+        return table[S.length()];
+    }
+}
 
 
 /* 
-@Q: Valid Parentheses 
+@Q: Rotate Image 
+n@Method: 
+@Complexity: Time O(n^2) 
+@note: 
+*/
+public class Solution {
+    public void rotate(int[][] matrix) {
+        int rowToVisit = matrix.length / 2;
+        int size = matrix.length;
+        for (int i = 0; i < rowToVisit; i++) {
+            //grids: size - 2 * row;
+            //begining: i
+            //last: size - i - 1
+            for (int j = i; j < size - i - 1; j++) {
+                int offset = j - i;
+                int temp = matrix[i][j];
+                
+                 //left to top
+                matrix[i][j] = matrix[size - i - 1 - offset][i];
+                
+                  //bottom to left
+                matrix[size - i - 1 - offset][i] = matrix[size - i - 1][size - i - 1 - offset];
+                
+                 //right to bottom
+                matrix[size - i - 1][size - i - 1 - offset] = matrix[i + offset][size - i - 1];
+                
+                //top to right
+                matrix[i + offset][size - i - 1] = temp;
+               
+            }
+        }
+    }
+    
+   
+}
+
+/* 
+@Q: Sort Colors 
 n@Method: 
 @Complexity: Time O(n) 
 @note: 
 */
 public class Solution {
-    public boolean isValid(String s) {
-      
-       
-       Stack<Character> stack = new Stack<>();
-       for (int i = 0; i < s.length(); i++) {
-           Character c = s.charAt(i);
-           switch (c) {
-               case '(':
-                case '{':
-                case '[':
-                    stack.push(c);
-                    break;
-                case ')':
-                    if (stack.isEmpty() || stack.pop() != '(') return false;
-                    break;
-                case '}':
-                    if (stack.isEmpty() || stack.pop() != '{') return false;
-                    break;
-                case ']':
-                    if (stack.isEmpty() || stack.pop() != '[') return false;
-                    break;
-                    
-           }
-          
-       }
-        return stack.isEmpty();
+    public void sortColors(int[] A) {
+        int zeros = 0;
+        int twos = A.length - 1;
+        
+        int index = 0;
+        
+        while (index <= twos) {
+            if (A[index] == 0) {
+                int temp = A[index];
+                A[index] = A[zeros];
+                A[zeros] = temp;
+                zeros++;
+            } else if (A[index] == 1) {
+                index++;
+            } else if (A[index] == 2) {
+                int temp = A[index];
+                A[index] = A[twos];
+                A[twos] = temp;
+                twos--;
+            }
+            index = Math.max(zeros, index);
+        }
     }
+}
+
+
+/* 
+@Q: Maximum Product Subarray 
+n@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public int maxProduct(int[] A) {
+     int max = A[0], min = A[0], maxAns = A[0];
+       for (int i = 1; i < A.length; i++) {
+          int mx = max, mn = min;
+          max = Math.max(Math.max(A[i], mx * A[i]), mn * A[i]);
+          min = Math.min(Math.min(A[i], mx * A[i]), mn * A[i]);
+          maxAns = Math.max(max, maxAns);
+       }
+       return maxAns;
+       
+    }
+}
+
+/* 
+@Q: Restore IP Addresses 
+n@Method: 
+@Complexity: Time O() ???
+@note: 
+*/
+class Solution {
+    public List<String> restoreIpAddresses(String s) {
+        return restoreIpAddresses(s, 4);
+    }
+
+    List<String> restoreIpAddresses(String s, int number) {
+        List<String> lst = new LinkedList<>();
+
+        if (number == 0 && s.length() == 0) {
+            lst.add("");
+            return lst;
+        } else if (number == 0 || s.length() == 0) {
+            return lst;
+        }
+        if (s.length() < number) return lst;
+        int maxDigits = Math.min(3, s.length());
+        int highestDigit = s.charAt(0) - '0';
+        if (highestDigit > 2) maxDigits = Math.min(2, s.length());
+        else if (highestDigit == 0) maxDigits = 1;
+
+        for (int i = 1; i <= maxDigits; i++) {
+            String str = s.substring(0, i);
+            int num = Integer.parseInt(str);
+            if (num > 255) continue;
+
+            List<String> rest = restoreIpAddresses(s.substring(i), number - 1);
+            for (String ss : rest) {
+                String ipStr = String.valueOf(num);
+                if (ss.length() > 0) {
+                    ipStr += "." + ss;
+                }
+                lst.add(ipStr);
+            }
+        }
+
+        return lst;
+
+    }
+}
+
+
+/* 
+@Q: Unique Binary Search Trees II
+n@Method: 
+@Complexity: Time O() ???
+@note: 
+*/
+public class Solution {
+    public List<TreeNode> generateTrees(int n) {
+        return generateTrees(1, n);
+    }
+
+    List<TreeNode> generateTrees(int low, int high) {
+        List<TreeNode> lst = new LinkedList<TreeNode>();
+        if (low > high) {
+            returnt lst;
+        }
+
+        for (int i = low; i <= high; i++) {
+
+            List<TreeNode> leftTrees =  generateTrees(low, i - 1);
+            List<TreeNode> rightTrees =  generateTrees(i + 1, high);
+
+            for (TreeNode left : leftTrees) {
+                for (TreeNode right : rightTrees) {
+                    TreeNode head = new TreeNode(i);
+                    head.left = left;
+                    head.right = right;
+                    lst.add(head);
+                }
+            }
+
+
+        }
+
+        return lst;
+    }
+}
+
+
+/* 
+@Q: Permutations I && II
+n@Method: 
+@Complexity: Time O(n^2) 
+@note: 
+*/
+public class Solution {
+    public List<List<Integer>> permute(int[] num) {
+                List<List<Integer>> returnList = new ArrayList<List<Integer>>();
+        returnList.add(new ArrayList<Integer>());
+
+        for (int i = 0; i < num.length; i++) {
+            Set<List<Integer>> currentSet = new HashSet<List<Integer>>();
+            for (List<Integer> l : returnList) {
+                for (int j = 0; j < l.size() + 1; j++) {
+                    ArrayList<Integer> T = new ArrayList<Integer>(l);
+                    T.add(j, num[i]);
+                    currentSet.add(T);
+                }
+            }
+            returnList = new ArrayList<List<Integer>>(currentSet);
+        }
+
+        return returnList;
+    }
+}
+
+
+/* 
+@Q: Intersection of Two Linked Lists 
+n@Method: 
+@Complexity: Time O(n) Space O(1) 
+@note: A solution similiar to cycle linkedlist; 
+*/
+public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        if (headA == null || headB == null) return null;
+        
+        ListNode p = headA;
+        while (p.next != null) {
+            p = p.next;
+        }
+        ListNode tail = p;
+        p.next = headA;
+        
+        ListNode slow = headB;
+        ListNode fast = headB;
+        boolean isIntersected = false;
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (slow == fast) {
+                isIntersected = true;
+                break;
+            }
+        }
+        
+        ListNode intersection = null;
+        if (isIntersected) {
+            fast = headB;
+            while (fast != slow) {
+                fast = fast.next;
+                slow = slow.next;
+            }
+            intersection = fast;
+        }
+        tail.next = null;
+        return intersection;
+    }
+}
+// solution from leetcode
+public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        if (headA == null || headB == null) return null;
+        
+        ListNode pA = headA;
+       ListNode pB = headB;
+       boolean bA = true;
+       boolean bB = true;
+       while (pA != null && pB != null) {
+           if (pA == pB) break;
+           if (bA && pA.next == null) {
+               pA = headB;
+               bA = false;
+           } else {
+               pA = pA.next;
+           }
+           if (bB && pB.next == null) {
+               pB = headA;
+               bB = false;
+           } else {
+               pB = pB.next;
+           }
+       }
+       
+       if (pA == pB && pA != null) return pA;
+       return null;
+    }
+}
+
+/* 
+@Q: Sort List
+n@Method: 
+@Complexity: Time O(n log n) Space O(1) 
+@note: Merge sort
+*/
+public class Solution {
+    public ListNode sortList(ListNode head) {
+        if (head == null || head.next == null) return head;
+        ListNode slow = head;
+        ListNode fast = head;
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        ListNode next = slow.next;
+        slow.next = null;
+        return mergeList(sortList(head), sortList(next));
+    }
+    
+        ListNode mergeList(ListNode a, ListNode b) {
+        ListNode dummyhead = new ListNode(0);
+        ListNode cur = dummyhead;
+        while (a != null && b != null) {
+            if (a.val <= b.val) {
+                cur.next = a;
+                a = a.next;
+            } else {
+                cur.next = b;
+                b = b.next;
+            }
+            cur = cur.next;
+        }
+        cur.next = a != null ? a : b;
+        return dummyhead.next;
+    }
+}
+
+/* 
+@Q: Partition List
+n@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public ListNode partition(ListNode head, int x) {
+        ListNode p1 = new ListNode(0);
+        ListNode p2 = new ListNode(0);
+        ListNode p2Head = p2;
+        ListNode p1Head = p1;
+        ListNode p = head;
+        
+        while (p != null) {
+            ListNode next = p.next;
+            if (p.val < x) {
+                p1.next = p;
+                p1 = p1.next;
+                p1.next = null;
+            } else {
+                p2.next = p;
+                p2 = p2.next;
+                p2.next = null;
+            }
+            p = next;
+        }
+        
+        p1.next = p2Head.next;
+        return p1Head.next;
+    }
+}
+
+/* 
+@Q: Minimum Depth of Binary Tree 
+n@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public int minDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        if (root.left == null && root.right == null) {
+            return 1;
+        }
+        int left = Integer.MAX_VALUE;
+        int right = Integer.MAX_VALUE;
+        if (root.left != null)
+            left = minDepth(root.left);
+        if (root.right != null)
+            right = minDepth(root.right);
+        return Math.min(left, right) + 1;
+ 
+    }
+}
+
+/* 
+@Q: Word Search 
+n@Method: 
+@Complexity: Time O(4^k * n) ???  
+@note: 
+*/
+public class Solution {
+   public boolean exist(char[][] board, String word) {
+        int m = board.length;
+        int n = board[0].length;
+        boolean[][] visited = new boolean[m][n];
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                if(check(board, i, j, word, visited))
+                    return true;
+
+
+        return false;
+    }
+
+    boolean check(char[][] board, int i, int j, String word, boolean[][] visited) {
+        if (visited[i][j]) return false;
+        if (word.length() == 1 && word.charAt(0) == board[i][j]) return true;
+        int m = board.length;
+        int n = board[0].length;
+        if (board[i][j] == word.charAt(0)) {
+            if (word.length() == 1) return true;
+            visited[i][j] = true;
+            if (i > 0) {
+                if (check(board, i - 1, j, word.substring(1), visited)) return true;
+            }
+            if (i < m - 1) {
+                if (check(board, i + 1, j, word.substring(1), visited)) return true;
+            }
+            if (j > 0) {
+                if (check(board, i, j - 1, word.substring(1), visited)) return true;
+            }
+            if (j < n - 1) {
+                if (check(board, i, j + 1, word.substring(1), visited)) return true;
+            }
+            visited[i][j] = false;
+        }
+
+        return false;
+    }
+}
+
+/* 
+@Q: Evaluate Reverse Polish Notation 
+n@Method: 
+@Complexity: Time O(n) 
+@note: String can be in switch case followed by jdk 1.7
+*/
+public class Solution {
+    public int evalRPN(String[] tokens) {
+        Stack<Integer> stack = new Stack<>();
+        for (int i = 0; i < tokens.length; i++) {
+            int a = 0, b = 0;
+            switch (tokens[i]) {
+                case "+":
+                    stack.push(stack.pop() + stack.pop());
+                    break;
+                case "/":
+                    b = stack.pop();
+                    a = stack.pop();
+                    stack.push(a / b);
+                    break;
+                case "-":
+                    b = stack.pop();
+                    a = stack.pop();
+                    stack.push(a - b);
+                    break;
+                case "*":
+                    b = stack.pop();
+                    a = stack.pop();
+                    stack.push(a * b);
+                    break;
+                default:
+                    stack.push(Integer.parseInt(tokens[i]));
+            }
+        }
+        return stack.isEmpty() ? 0 : stack.pop();
+    }
+}
+
+/* 
+@Q: Find Minimum in Rotated Sorted Array II 
+n@Method: 
+@Complexity: Time O(log n) 
+@note: 
+*/
+public class Solution {
+    public int findMin(int[] num) {
+        if (num.length == 1) return num[0];
+        return findMin(num, 0, num.length - 1);
+    }
+    
+    int findMin(int[] num, int low, int high) {
+        if (low == high) return num[low];
+        
+        int mid = (low + high) / 2;
+        if (num[mid] < num[high]) {
+            return findMin(num, low, mid);
+        } else if (num[mid] > num[high]) {
+            return findMin(num, mid + 1, high);
+        } else {
+            if (num[mid] != num[low]) {
+                return findMin(num, low, mid);
+            } else {
+                return Math.min(findMin(num, low, mid), findMin(num, mid + 1, high));
+            }
+        }
+        
+        
+    }
+}
+
+/* 
+@Q: Interleaving String 
+@Method: dp
+@Complexity: Time O(n^2) 
+@note: 
+*/
+public class Solution {
+    public boolean isInterleave(String s1, String s2, String s3) {
+        if (s1.length() + s2.length() != s3.length()) return false;
+        boolean[][] dp = new boolean[s1.length()+1][s2.length()+1];
+        dp[0][0] = true;
+        for (int i = 1; i <= s2.length(); i++) {
+            if (s2.charAt(i - 1) == s3.charAt(i - 1) && dp[0][i-1]) {
+                dp[0][i] = true;
+            }
+        }
+        for (int i = 1; i <= s1.length(); i++) {
+            if (s1.charAt(i - 1) == s3.charAt(i - 1) && dp[i-1][0]) {
+                dp[i][0] = true;
+            }
+        }
+        for (int i = 1; i <= s1.length(); i++) {
+            for (int j = 1; j <= s2.length(); j++) {
+                if ((s1.charAt(i - 1) == s3.charAt(i + j - 1) && dp[i-1][j])
+                    || ((s2.charAt(j - 1) == s3.charAt(i + j - 1) && dp[i][j-1]))) {
+                    dp[i][j] = true;
+                }
+            }
+        }
+        return dp[s1.length()][s2.length()];
+    }
+}
+
+/* 
+@Q: Decode Ways 
+@Method: dp
+@Complexity: Time O(n) 
+@note: carefull with corner cases
+*/
+public class Solution {
+    public int numDecodings(String s) {
+        if (s.length() == 0 || s.charAt(0) == '0') return 0;
+        int[] ways = new int[s.length()+1];
+        ways[0] = 1;
+        ways[1] = 1;
+        for (int i = 2; i <= s.length(); i++) {
+            if (s.charAt(i - 1) != '0') {
+                int num = (s.charAt(i - 2) - '0') * 10 + s.charAt(i - 1) - '0';
+                if (num > 10 && num < 27) {
+                    ways[i] = ways[i-1] + ways[i-2];
+                } else {
+                    ways[i] = ways[i-1];
+                }
+            } else {
+                if (s.charAt(i - 2) == '1' || s.charAt(i - 2) == '2') {
+                    ways[i] = ways[i-2];    
+                } 
+            }
+        }
+        return ways[s.length()];
+    }
+}
+
+/* 
+@Q: Triangle 
+@Method: dp
+@Complexity: Time O(kn) 
+@note: this one modifies the existing structure
+*/
+public class Solution {
+    public int minimumTotal(List<List<Integer>> triangle) {
+        if (triangle.size() == 0) return 0;
+        if (triangle.size() == 1) return triangle.get(0).get(0);
+        
+        for (int i = triangle.size() - 1; i > 0; i--) {
+            List<Integer> l1 = triangle.get(i - 1);
+            List<Integer> l2 = triangle.get(i);
+            for (int j = 0; j < l1.size(); j++) {
+                l1.set(j, l1.get(j) + Math.min(l2.get(j), l2.get(j + 1)));
+            }
+        }
+        
+        return triangle.get(0).get(0);
+    }
+}
+
+/* 
+@Q: atoi 
+@Method: dp
+@Complexity: Time O(n) 
+@note: 1. empty space 2. symbol 3. non-digit 4. overflow
+*/
+public class Solution {
+      public int atoi(String str) {
+        if (str == null || str.length() == 0) return 0;
+
+        str = str.trim();
+
+        boolean flag = true;
+        if (str.charAt(0) == '+') {
+            str = str.substring(1);
+        } else if (str.charAt(0) == '-') {
+            str = str.substring(1);
+            flag = false;
+        }
+
+
+        long value = 0;
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) <= '9' && str.charAt(i) >= '0') {
+                value = value * 10 + (str.charAt(i) - '0');
+            } else {
+                break;
+            }
+            if (value >= Integer.MAX_VALUE && flag) {
+                return Integer.MAX_VALUE;
+            } else if (-value <= Integer.MIN_VALUE && !flag) {
+                return  Integer.MIN_VALUE;
+            }
+        }
+
+        return (int) (flag ? value : -value);
+    }
+}
+
+/* 
+@Q: Gray Code 
+@Method: 
+@Complexity: Time O(2^n) 
+@note:
+*/
+public class Solution {
+    public List<Integer> grayCode(int n) {
+        Set<Integer> visited = new HashSet<>();
+        return grayCode(0, n, visited);
+    }
+    
+    List<Integer> grayCode(int start, int n, Set<Integer> visited) {
+        List<Integer> lst = new ArrayList<>();
+        
+        lst.add(start);
+        visited.add(start);
+        for (int i = 0; i < n; i++) {
+            int newInt = swap1Bit(start, i);
+            if (!visited.contains(newInt)) {
+                lst.addAll(grayCode(newInt, n, visited));
+                break;
+            }
+        }
+        
+        return lst;
+    }
+    
+    int swap1Bit(int num, int index) {
+        if ((num >> index & 1) != 0) {
+            return (num & ~(1 << index));
+        } else {
+            return (num | 1 << index);
+        }
+    }
+}
+
+/* 
+@Q: Minimum Path Sum 
+@Method: 
+@Complexity: Time O(n^2) Space(n) extra (could be O(1) if allowing modification on input data) 
+@note:
+*/
+public class Solution {
+    public int minPathSum(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        int[] dp = new int[n];
+        dp[n-1] = grid[m-1][n-1];
+        for (int i = n - 2; i >= 0; i--) {
+            dp[i] = grid[m-1][i] + dp[i+1];
+        }
+    
+        
+        for (int i = m - 2; i >= 0; i--) {
+            dp[n-1] += grid[i][n-1];
+            int last = dp[n-1];
+            int cur = 0;
+            for (int j = n - 2; j >= 0; j--) {
+                // grid[i][j] += Math.min(grid[i][j+1], grid[i+1][j]);
+                cur = grid[i][j] + Math.min(dp[j], last);
+                dp[j+1] = last;
+                last = cur;
+            }
+            dp[0] = last;
+
+        }
+        
+        return grid[0][0];
+    }
+}
+public class Solution {
+    public int minPathSum(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        for (int i = n - 2; i >= 0; i--) {
+            grid[m-1][i] += grid[m-1][i+1];
+        }
+        for (int i = m - 2; i >= 0; i--) {
+            grid[i][n-1] += grid[i+1][n-1];
+        }
+        
+        for (int i = m - 2; i >= 0; i--) {
+            for (int j = n - 2; j >= 0; j--) {
+                grid[i][j] += Math.min(grid[i][j+1], grid[i+1][j]);
+            }
+        }
+        
+        return grid[0][0];
+    }
+}
+
+
+/* 
+@Q: Insertion Sort List 
+@Method: 
+@Complexity: Time O(n)
+@note: carefull with insertion, always nullify the next node of the node inserted
+*/
+public class Solution {
+    public ListNode insertionSortList(ListNode head) {
+        ListNode dummy = new ListNode(Integer.MIN_VALUE);
+        ListNode p = head;
+        while (p != null) {
+            ListNode next = p.next;
+            p.next = null;
+            insert(dummy, p);
+            p = next;
+        }
+        return dummy.next;
+    }
+    
+    void insert(ListNode head, ListNode node) {
+        ListNode p = head;
+        while (p.next != null) {
+            if (p.next.val > node.val) {
+                ListNode remains = p.next;
+                p.next = node;
+                node.next = remains;
+                return;
+            }
+            p = p.next;
+        }
+        p.next = node;
+    }
+}
+
+
+/* 
+@Q: A String Replacement Problem 
+@Method: 
+@Complexity: Time O(n)
+@note: 
+*/
+class Solution {
+    String convert(char[] str, char[] pattern) {
+        int p1 = 0;
+        int p2 = 0;
+
+        while (p2 < str.length) {
+            if (isMatch(str, p2, pattern)) {
+                if (p1 == 0 || str[p1-1] != 'x') {
+                    str[p1] = 'x';
+                    p1++;
+                }
+                p2 += pattern.length;
+            } else {
+                str[p1] = str[p2];
+                p1++;
+                p2++;
+            }
+        }
+        return new String(str).substring(0, p1);
+    }
+
+    boolean isMatch(char[] str, int start, char[] pattern) {
+        for (int i = 0; i < pattern.length; i++) {
+            if (start + i >= str.length || str[start+i] != pattern[i]) return false;
+        }
+        return true;
+    }
+
+}
+// a slightly better solution
+class Solution {
+    String convert(char[] str, char[] pattern) {
+        int p1 = 0;
+        int p2 = 0;
+
+        while (p2 < str.length) {
+            boolean isMatched = false;
+            while (isMatch(str, p2, pattern)) {
+                isMatched = true;
+                p2 += pattern.length;
+            }
+
+            if (isMatched) {
+                str[p1++] = 'X';
+            } else {
+                str[p1++] = str[p2++]
+;            }
+
+        }
+        return new String(str).substring(0, p1);
+    }
+
+    boolean isMatch(char[] str, int start, char[] pattern) {
+        for (int i = 0; i < pattern.length; i++) {
+            if (start + i >= str.length || str[start+i] != pattern[i]) return false;
+        }
+        return true;
+    }
+
+}
+
+
+/* 
+@Q: Candy
+@Method: 
+@Complexity: Time O(n) one pass
+@note: 
+*/
+public class Solution {
+    public int candy(int[] ratings) {
+        if (ratings.length < 2) return ratings.length;
+        int pre = 0;
+        int cur = 1;
+        int len = 0;
+        int total = 1;
+        for (int i = 1; i < ratings.length; i++) {
+            if (ratings[i] > ratings[i-1]) {
+                len = 0;
+                cur++;
+                total += cur;
+                pre = cur;
+            } else if (ratings[i] == ratings[i-1]) {
+                len = 0;
+                cur = 1;
+                total += cur;
+                pre = cur;
+            } else {
+                len++;
+                if (pre <= len) {
+                    total++;
+                }
+                total += len;
+                cur = 1;
+            }
+        }
+
+        return total;
+    }
+}
+
+
+/* 
+@Q: Merge Two Sorted Lists
+@Method: 
+@Complexity: Time O(n) one pass
+@note: 
+*/
+public class Solution {
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        ListNode dummyHead = new ListNode(0);
+        ListNode dummy = dummyHead;
+        while (l1 != null && l2 != null) {
+            if (l1.val < l2.val) {
+                dummy.next = l1;
+                dummy = dummy.next;
+                l1 = l1.next;
+                dummy.next = null;
+            } else {
+                dummy.next = l2;
+                dummy = dummy.next;
+                l2 = l2.next;
+                dummy.next = null;
+            }
+        }
+        dummy.next = l1 != null ? l1 : l2;
+        return dummyHead.next;
+    }
+}
+
+/* 
+@Q: Search a 2D Matrix
+@Method: 
+@Complexity: Time O(log n) 
+@note: 
+*/
+public class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        
+        return searchMatrix(matrix, target, 0, matrix.length * matrix[0].length - 1);
+    }
+    
+    public boolean searchMatrix(int[][] matrix, int target, int low, int high) {
+        if (high < low) {
+            return false;
+        }
+        
+        int mid = (low + high) / 2;
+        int row = mid / matrix[0].length;
+        int col = mid % matrix[0].length;
+        if (matrix[row][col] == target) {
+            return true;
+        } else if (matrix[row][col] > target) {
+            return searchMatrix(matrix, target, low, mid - 1);
+        } else {
+            return searchMatrix(matrix, target, mid + 1, high);
+        }
+    }
+    
+}
+
+/* 
+@Q: Longest Valid Parentheses 
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public int longestValidParentheses(String s) {
+        Stack<Integer> stack = new Stack<>();
+        int cur = 0;
+        int max = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '(') {
+                stack.push(cur);
+                cur = 0;
+            } else {
+                if (!stack.isEmpty()) {
+                    cur += stack.pop() + 2;
+                } else {
+                    cur = 0;
+                }
+            }
+            max = Math.max(max, cur);
+        }
+        
+        return max;
+    }
+}
+
+/* 
+@Q: Substring with Concatenation of All Words 
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+ public List<Integer> findSubstring(String S, String[] L)
+    {
+        final List<Integer> result = new ArrayList<Integer>();
+        if (L.length > 0 && L[0].length() > 0 && S.length() >= L.length * L[0].length())
+        {
+            final Map<String, Integer> dict = new HashMap<String, Integer>();
+
+            for (final String str : L)
+            {
+                dict.put(str, (dict.containsKey(str) ? dict.get(str) : 0) + 1);
+            }
+
+            final int len = L[0].length();
+            // We only start from 0 ~ len - 1.
+            for (int i = 0; i < len; ++i)
+            {
+                // This map is used to store the remained word count in the directory.
+                Map<String, Integer> map = new HashMap<String, Integer>(dict);
+                // Use queue to store current sequence. All the words in queue also should be in map.
+                final Queue<String> queue = new LinkedList<String>();
+                // Every time add one word.
+                for (int j = i; (j + len) <= S.length(); j += len)
+                {
+                    final String str = S.substring(j, j + len);
+                    // If this word is in directory.
+                    if (dict.containsKey(str))
+                    {
+                        // Add the word into the sequence.
+                        queue.add(str);
+                        // We already have enough such word in the sequence so we need to move the starting point to next such word.
+                        if (map.get(str) == 0)
+                        {
+                            while (!str.equals(queue.element()))
+                            {
+                                final String item = queue.remove();
+                                map.put(item, map.get(item) + 1);
+                            }
+
+                            queue.remove();
+                        }
+                        else
+                        {
+                            map.put(str, map.get(str) - 1);
+                        }
+
+                        // There are enough words in the sequence.
+                        if (queue.size() == L.length)
+                        {
+                            result.add(j - len * (L.length - 1));
+                        }
+                    }
+                    else
+                    {
+                        queue.clear();
+                        map = new HashMap<String, Integer>(dict);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+}
+
+
+/* 
+@Q: reverse a word in string in place
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+class Solution {
+    public String reverseWords(String s) {
+        char[] str = s.trim().toCharArray();
+        if (str.length < 2) return new String(str);
+        swapWord(str, 0, str.length - 1);
+        int len = clearSpace(str);
+        int low = 0, high = 0;
+
+        while (high < len) {
+            boolean needSwap = false;
+            while (high < str.length && str[high] != ' ') {
+                needSwap = true;
+                high++;
+            }
+            if (needSwap) {
+                swapWord(str, low, high - 1);
+                high++;
+                low = high;
+            }
+        }
+
+        return new String(str).substring(0, len);
+    }
+
+    int clearSpace(char[] array) {
+        int slow = 0, fast = 0;
+        while (fast < array.length) {
+            boolean isSpace = false;
+            while (array[fast] == ' ') {
+                isSpace = true;
+                fast++;
+            }
+            if (isSpace) {
+                array[slow++] = ' ';
+            } else {
+                array[slow++] = array[fast++];
+            }
+        }
+        return slow;
+    }
+
+    void swapWord(char[] array, int start, int end) {
+        while (start < end) {
+            swap(array, start++, end--);
+        }
+    }
+
+    void swap(char[] array, int i, int j) {
+        char tmp = array[i];
+        array[i] = array[j];
+        array[j] = tmp;
+    }
+}
+
+/* 
+@Q: Max Points on a Line 
+@Method: 
+@Complexity: Time O(n^2) 
+@note: 
+*/
+public class Solution {
+    public int maxPoints(Point[] points) {
+        if(points.length <= 2)
+            return points.length;
+
+        int n = points.length;
+        int globalMax = 2;
+        for(int i = 0; i < n - 1; i++){
+            HashMap<Double, Integer> mp = new HashMap<Double, Integer>();
+            int dup = 0;
+            for(int j = i + 1; j < n; j++){
+                int dy = points[j].y - points[i].y;
+                int dx = points[j].x - points[i].x;
+                double k; 
+                if(dy == 0 && dx == 0){
+                    dup++;
+                    continue;
+                }
+                else if(dx == 0)
+                    k = Double.MAX_VALUE;
+                else
+                    k = dy / (double)dx + 0.0;  
+            
+
+                if(!mp.containsKey(k))
+                    mp.put(k, 2);
+                else
+                    mp.put(k, mp.get(k)+1);
+            }
+            int localMax = 1;
+            for(Map.Entry<Double, Integer> entry : mp.entrySet()){
+                double key = entry.getKey();
+                if(mp.get(key) > localMax)
+                    localMax = mp.get(key);
+            }
+            localMax += dup;
+            if(localMax > globalMax)
+                globalMax = localMax;
+        }
+
+        return globalMax;
+    }
+  
+}
+
+
+
+/* 
+@Q: Gas Station 
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public int canCompleteCircuit(int[] gas, int[] cost) {
+        int n = gas.length;
+        int total = 0, sum = 0;
+        int start = 0;
+        for (int i = 0; i < n; i++) {
+            int diff = gas[i] - cost[i];
+            total += diff;
+            sum += diff;
+            
+            if (sum < 0) {
+                sum = 0;
+                start =  (i + 1) % n;
+            }
+        }
+        if (total < 0) return -1;
+        else return start;
+    }
+}
+
+/* 
+@Q: Reverse Nodes in k-Group 
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if (head == null || head.next == null) return head;
+        if (k < 2) return head;
+        
+        int cnt = k - 1;
+        ListNode p = head;
+        while (p != null && cnt > 0) {
+            p = p.next;
+            cnt--;
+        }
+        
+        if (p == null) return head;
+        ListNode rest = p.next;
+        p.next = null;
+        ListNode tail = head;
+        head = reverse(head);
+        tail.next = reverseKGroup(rest, k);
+        
+        return head;
+    }
+    
+    ListNode reverse(ListNode head) {
+        ListNode p = head;
+        if (head == null || head.next == null) return head;
+        
+        ListNode last = null;
+        while (p != null) {
+            ListNode next = p.next;
+            if (last != null) {
+                p.next = last;
+            } else {
+                p.next = null;
+            }
+            last = p;
+            p = next;
+        }
+        
+        return last;
+    }
+}
+
+
+/* 
+@Q: Single Number II 
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public int singleNumber(int[] A) {
+        int[] bits = new int[32];
+
+
+        int single = 0;
+
+        for (int i = 0; i < 32; i++) {
+            for (int j = 0; j < A.length; j++) {
+                if ((A[j] >> i & 1) != 0) {
+                    bits[i]++;
+                }
+            }
+            if (bits[i] % 3 != 0) {
+                single |= (1 << i);
+            }
+        }
+
+        return single;
+    }
+}
+
+/* 
+@Q: Palindrome Partitioning 
+@Method: 
+@Complexity: Time O(n!) 
+@note: 
+*/
+public class Solution {
+    HashMap<String, List<List<String>>> map = new HashMap<String, List<List<String>>>();
+    public List<List<String>> partition(String s) {
+        if (map.containsKey(s)) return map.get(s);
+        List<List<String>> lst = new LinkedList<List<String>>();
+        if (s.length() == 0) {
+            lst.add(Collections.<String>emptyList());
+        }
+        
+        int index = 1;
+        while (index <= s.length()) {
+            String str = s.substring(0, index);
+            if (isValid(str)) {
+                
+                List<List<String>> rest = partition(s.substring(index));
+                for (List<String> listRest : rest) {
+                    List<String> newList = new LinkedList<String>(listRest);
+                    newList.add(0, str);
+                    lst.add(newList);
+                }
+                
+                
+            }
+            index++;
+        }
+        map.put(s, lst);
+        
+        return lst;
+    }
+    
+    boolean isValid(String s) {
+        String reversed = new StringBuffer(s).reverse().toString();
+        return reversed.equals(s);
+    }
+}
+
+
+/* 
+@Q: Sum Root to Leaf Numbers 
+@Method: 
+@Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+    public int sumNumbers(TreeNode root) {
+        if (root == null) return 0;
+        return sumNumbers(root, 0);
+    }
+    
+    int sumNumbers(TreeNode root, int sum) {
+        if (root == null) return 0;
+        sum = sum * 10 + root.val;
+        if (root.left == null && root.right == null) return sum;
+        return sumNumbers(root.left, sum) + sumNumbers(root.right, sum);
+    }
+}
+
+
+/* 
+@Q: Word Ladder
+@Method: 
+@Complexity: Time O(26^k) 
+@note: 
+*/
+public class Solution {
+    public int ladderLength(String start, String end, Set<String> dict) {
+         int steps = 1;
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        Queue<String> queue = new LinkedList<String>();
+
+        queue.add(start);
+        map.put(start, 1);
+
+        while (!queue.isEmpty()) {
+            String w = queue.poll();
+            for (int i = 0; i < w.length(); i++) {
+                StringBuffer sb = new StringBuffer(w);
+                for (char c = 'a'; c <= 'z'; c++) {
+                    if (c != w.charAt(i)) {
+                        sb.setCharAt(i, c);
+                        String word = sb.toString();
+                        if (word.equals(end)) return map.get(w) + 1;
+                        if (dict.contains(word) && !map.containsKey(word)) {
+                            map.put(word, map.get(w) + 1);
+                            queue.add(word);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        return 0;
+    }
+}
+
+/* 
+@Q: Best Time to Buy and Sell Stock III 
+@Method: 
+@Complexity: Time O(n)  3 passes
+@note: 
+*/
+public class Solution {
+   public int maxProfit(int[] prices) {
+        int[] before = new int[prices.length];
+        int[] after = new int[prices.length];
+
+        int min = Integer.MAX_VALUE;
+        int profit = 0;
+        for (int i = 0; i < prices.length; i++) {
+            int p = prices[i] - min;
+            profit = Math.max(profit, p);
+            if (prices[i] < min) {
+                min = prices[i];
+            }
+            before[i] = profit;
+        }
+
+        int max = 0;
+        profit = 0;
+        for (int i = prices.length - 1; i >= 0; i--) {
+            int p = max - prices[i];
+            profit = Math.max(profit, p);
+            if (prices[i] > max) {
+                max = prices[i];
+            }
+            after[i] = profit;
+        }
+
+        int maxProf = 0;
+        for (int i = 0; i < prices.length; i++) {
+            maxProf = Math.max(before[i] + after[i], maxProf);
+        }
+        return maxProf;
+    }
+}
+
+
+/* 
+@Q: Pascal's Triangle
+@Method: 
+@Complexity: Time O(n^2)  
+@note: 
+*/
+public class Solution {
+    public List<List<Integer>> generate(int numRows) {
+        List<List<Integer>> lst = new ArrayList<>();
+        List<Integer> l = new ArrayList<>();
+        while (numRows > 0) {
+            for (int i = l.size() - 1; i > 0; i--) {
+                l.set(i, l.get(i) + l.get(i - 1));
+            }
+            l.add(1);
+            lst.add(new ArrayList<Integer>(l));
+            numRows--;
+        }
+        return lst;
+    }
+}
+
+
+/* 
+@Q: Balanced Binary Tree
+@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public boolean isBalanced(TreeNode root) {
+        int depth = getDepth(root);
+        if (depth == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    public int getDepth(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+        
+        int left = getDepth(node.left);
+        if (left == -1) return -1;
+        int right = getDepth(node.right);
+        if (right == -1) return -1;
+        
+        int diff = Math.abs(left - right);
+        if (diff > 1) {
+            return -1;
+        }
+        return Math.max(left, right) + 1;
+        
+    }
+}
+
+/* 
+@Q: Flatten Binary Tree to Linked List 
+@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public void flatten(TreeNode root) {
+        TreeNode p = root;
+        TreeNode last = null;
+        Stack<TreeNode> stack = new Stack<>();
+        
+        while (!stack.isEmpty() || p != null) {
+            if (p != null) {
+                stack.push(p);
+                p = p.right;
+            } else {
+                TreeNode node = stack.peek();
+                if (node.left != null && node.left != last) {
+                    p = node.left;
+                } else {
+                    // visit node
+                    node.left = null;
+                    node.right = last;
+                    last = stack.pop();
+                    
+                }
+            }
+        }
+    }
+}
+
+/* 
+@Q: quicksort and mergesort; partition application to findkth
+@Method: 
+@Complexity: Time O(n logn) for sorting (O(n^2) worst case for quicksort) and O(n) for partition  
+@note: 
+*/
+class Solution {
+    public int findKth(int[] array, int k, int low, int high) {
+        if (low == high) return array[low];
+        if (low < high) {
+            int pivotIndex = partition(array, low, high);
+            if (pivotIndex == k - 1) return array[pivotIndex];
+            else if (pivotIndex > k - 1) return findKth(array, k, low, pivotIndex - 1);
+            else return findKth(array, k, pivotIndex + 1, high);
+        }
+        return -1;
+    }
+    public void quickSort(int[] array, int low, int high) {
+        if (low < high) {
+            int pivot = partition(array, low, high);
+            quickSort(array, low, pivot - 1);
+            quickSort(array, pivot + 1, high);
+        }
+    }
+
+    int partition(int[] array, int low, int high) {
+        int pivot = array[(low + high) / 2];
+        while (low <= high) {
+            while (array[low] < pivot) low++;
+            while (array[high] > pivot) high--;
+
+            if (low <= high) {
+                int tmp = array[low];
+                array[low] = array[high];
+                array[high] = tmp;
+                low++;
+                high--;
+            }
+        }
+        return low;
+    }
+
+    public void mergeSort(int[] array, int low, int high) {
+        if (low < high) {
+            int mid = (low + high) / 2;
+            mergeSort(array, low, mid);
+            mergeSort(array, mid + 1, high);
+            merge(array, low, mid, high);
+        }
+
+    }
+
+    void merge(int[] array, int low, int mid, int high) {
+        int[] helper = new int[array.length];
+        for (int i = low; i <= high; i++) {
+            helper[i] = array[i];
+        }
+
+        int leftHalf = low;
+        int rightHalf = mid + 1;
+        int start = low;
+        while (leftHalf <= mid && rightHalf <= high) {
+            if (helper[leftHalf] < helper[rightHalf]) {
+                array[start++] = helper[leftHalf++];
+            } else {
+                array[start++] = helper[rightHalf++];
+            }
+        }
+        while (leftHalf <= mid) {
+            array[start++] = helper[leftHalf++];
+        }
+    }
+}
+class Solution {
+    public void quickSort(int[] array, int low, int high) {
+        int pivotIdx = partition(array, low, high);
+        if (low < pivotIdx - 1)
+            quickSort(array, low, pivotIdx - 1);
+        if (high > pivotIdx)
+            quickSort(array, pivotIdx + 1, high);
+
+    }
+
+    int partition(int[] array, int low, int high) {
+        int pivot = array[(low + high) / 2];
+        while (low <= high) {
+            while (array[low] < pivot) low++;
+            while (array[high] > pivot) high--;
+
+            if (low <= high) {
+                int tmp = array[low];
+                array[low] = array[high];
+                array[high] = tmp;
+                low++;
+                high--;
+            }
+        }
+        return low;
+    }
+}
+
+
+
+/* 
+@Q: Linked List Cycle 
+@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public boolean hasCycle(ListNode head) {
+        if (head == null || head.next == null) return false;
+        ListNode slow = head;
+        ListNode fast = head;
+        do {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (slow == fast) return true;
+        } while (fast != null && fast.next != null);
+        
+        return false;
+    }
+}
+
+
+/* 
+@Q: Convert Sorted List to Binary Search Tree
+@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public TreeNode sortedListToBST(ListNode head) {
+        if (head == null) return null;
+        ListNode preMid = findPreMid(head);
+        ListNode mid = preMid.next;
+        preMid.next = null;
+        ListNode rest = mid.next;
+        TreeNode node = new TreeNode(mid.val);
+        if (mid != head) {
+            node.left = sortedListToBST(head);
+        }
+        node.right = sortedListToBST(rest);
+        return node;
+
+    }
+
+    ListNode findPreMid(ListNode node) {
+        ListNode slow = new ListNode(0);
+        slow.next = node;
+        ListNode fast = node;
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return slow;
+    }
+}
+
+/* 
+@Q: Jump Game II
+@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public int jump(int[] A) {
+        if (A.length == 0) return 0;
+        int edge = 0;
+        int minStep = 0;
+        int maxReach = A[0];
+        for (int i = 1; i < A.length; i++) {
+            if (i > edge) {
+               minStep++;
+               edge = maxReach;
+               if (edge >= A.length - 1) return minStep;
+            }
+            maxReach = Math.max(A[i] + i, maxReach);
+        }
+        return minStep;
+    }
+}
+
+/* 
+@Q: Validate Binary Search Tree
+@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public boolean isValidBST(TreeNode root) {
+        if (root == null) return true;
+        
+        TreeNode p = root;
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        Integer pre = null;
+        while (!stack.isEmpty() || p != null) {
+            if (p != null) {
+                stack.push(p);
+                p = p.left;
+                
+            } else {
+                p = stack.pop();
+                if (pre != null && pre >= p.val) return false;
+                pre = p.val;
+                p = p.right;
+            }
+        }
+        return true;
+    }
+}
+
+
+/* 
+@Q: Combinations
+@Method: 
+@Complexity: Time O(n!)  
+@note: 
+*/
+public class Solution {
+    public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> lst = new ArrayList<>();
+        if (k == 0) {
+            lst.add(Collections.<Integer>emptyList());
+        }
+        
+        for (int i = n; i > 0; i--) {
+            List<List<Integer>> rest = combine(i - 1, k - 1);
+            for (List<Integer> l : rest) {
+                List<Integer> nL = new ArrayList<>(l);
+                nL.add(i);
+                lst.add(nL);
+            }
+        }
+        
+        return lst;
+    }
+}
+
+/* 
+@Q: Plus One 
+@Method: 
+@Complexity: Time O(n)  
+@note: 
+*/
+public class Solution {
+    public int[] plusOne(int[] digits) {
+        int carry = 1;
+        for (int i = digits.length - 1; i >= 0; i--) {
+            int num = digits[i] + carry;
+            digits[i] = num % 10;
+            carry = num / 10;
+        }
+        if (carry != 0) {
+            int[] toReturn = new int[digits.length+1];
+            for (int i = 0; i < digits.length; i++) {
+                toReturn[i+1] = digits[i];
+            }
+            toReturn[0] = 1;
+            return toReturn;
+        } else {
+            return digits;
+        }
+    }
+}
+
+
+/* 
+@Q: Unique Paths II 
+@Method: 
+@Complexity: Time O(n^2) Space(n^2) (could be linear but not in the mood...)  
+@note: 
+*/
+public class Solution {
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        int m = obstacleGrid.length;
+        int n = obstacleGrid[0].length;
+        int[][] map = new int[m][n];
+        if (obstacleGrid[m-1][n-1] == 1) return 0;
+        map[m-1][n-1] = 1;
+        for (int i = n - 2; i >= 0; i--) {
+            if (checkValid(obstacleGrid, m - 1, i))
+                map[m-1][i] = map[m-1][i+1];
+        }
+        for (int i = m - 2; i >= 0; i--) {
+            if (checkValid(obstacleGrid, i, n - 1))
+                map[i][n-1] = map[i+1][n-1];
+        }
+
+        for (int i = m - 2; i >= 0; i--) {
+            for (int j = n - 2; j >= 0; j--) {
+                if (checkValid(obstacleGrid, i, j)) {
+                    map[i][j] = map[i+1][j] + map[i][j+1];
+                }
+            }
+        }
+        
+        return map[0][0];
+
+    }
+    public boolean checkValid(int[][] obstacleGrid, int m, int n) {
+        return obstacleGrid[m][n] == 0 ? true : false;
+    }
+}
+
+/* 
+@Q: Rotate List
+@Method:
+ @Complexity: Time O(n) 
+@note: 
+*/
+public class Solution {
+ public ListNode rotateRight(ListNode head, int n) {
+        int len = 0;
+        ListNode p = head;
+        while (p != null) {
+            p = p.next;
+            len++;
+        }
+
+        if (len <= 1) return head;
+
+        n = n % len;
+        
+        if (n == 0) return head;
+
+        int cnt = n;
+        ListNode fast = head;
+        while (cnt > 0) {
+            fast = fast.next;
+            cnt--;
+        }
+        ListNode slow = head;
+        
+        while (fast.next != null) {
+            fast = fast.next;
+            slow = slow.next;
+        }
+        ListNode returnHead = slow.next;
+        slow.next = null;
+        fast.next = head;
+        return returnHead;
+    }
+}
+
+/* 
+@Q: Two sum
+@Method:
+ @Complexity: Time O(n) 
+@note: hashmap to store value to index, dups exist so key should be a list
+*/
+public class Solution {
+    public int[] twoSum(int[] numbers, int target) {
+        int index1 = 0;
+        int index2 = numbers.length - 1;
+        HashMap<Integer,List<Integer>> map = new HashMap<Integer,List<Integer>>();
+        for (int i = 0; i < numbers.length; i++) {
+            List<Integer> lst = map.get(numbers[i]);
+            if (lst != null) {
+                lst.add(i);
+            } else {
+                lst = new LinkedList<Integer>();
+                lst.add(i);
+                map.put(numbers[i], lst);
+            }
+        }
+        Arrays.sort(numbers);
+        while (index1 < index2) {
+            int sum = numbers[index1] + numbers[index2];
+            if (sum < target) {
+                index1++;
+            } else if (sum > target) {
+                index2--;
+            } else break;
+        }
+        
+        int i1 = numbers.length;
+        int i2 = -1;
+        for (Integer index : map.get(numbers[index1])) {
+            if (index < i1) {
+                i1 = index;
+            }
+        }
+        for (Integer index : map.get(numbers[index2])) {
+            if (index > i2) {
+                i2 = index;
+            }
+        }
+        int min = Math.min(i1, i2);
+        int max = Math.max(i1, i2);
+        int[] toReturn = {min + 1, max + 1};
+        return toReturn;
+    }
+}
+
+
+
+// implement strstr
+public class Solution {
+    public  int strStr(String haystack, String needle) {
+        if (needle.length() == 0) return 0;
+        if (haystack.length() == 0) return -1;
+       
+
+        int[] layerover = getLayer(needle);
+        int index = 0;
+        int pos = 0;
+        while (index <= haystack.length() - needle.length()) {
+            for (; pos < needle.length(); pos++) {
+                if (haystack.charAt(index + pos) != needle.charAt(pos)) {
+                    break;
+                }
+            }
+            if (pos == needle.length()) {
+                return index;
+            } else {
+                if (pos == 0) {
+                    index++;
+                } else {
+                    index += pos - layerover[pos-1];
+                    pos = layerover[pos-1];
+                }
+
+            }
+        }
+
+        return -1;
+
+    }
+
+    public  int[] getLayer(String str) {
+        int[] layerOver = new int[str.length()];
+        layerOver[0] = 0;
+
+        for (int i = 1; i < str.length(); i++) {
+            int index = layerOver[i-1];
+            while (index > 0 && str.charAt(index) != str.charAt(i)) {
+                index = layerOver[index-1];
+            }
+            if (str.charAt(index) == str.charAt(i)) {
+                layerOver[i] = layerOver[i-1] + 1;
+            } else {
+                layerOver[i] = 0;
+            }
+        }
+
+        return layerOver;
+    }
+
 }
