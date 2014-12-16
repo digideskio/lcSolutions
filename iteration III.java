@@ -110,3 +110,45 @@ class Solution {
         return pNote == note.length();
     }
 }
+
+
+
+ void levelOrder(TreeNode root) {
+    if (root == null) return;
+
+    List<List<Integer>> lst = new ArrayList<>();
+    List<Integer> curLst = new ArrayList<>();
+    Queue<TreeNode> queue = new LinkedList<>();
+    queue.add(root);
+    int curCnt = 1;
+    int level = 0;
+    boolean isEnd = true;
+    while (!queue.isEmpty()) {
+        TreeNode node = queue.poll();
+        curCnt--;
+
+        if (node != null) {
+            curLst.add(node.val);
+            queue.add(node.left);
+            queue.add(node.right);
+            isEnd = false;
+        } else {
+            curLst.add(null);
+            queue.add(null);
+            queue.add(null);
+        }
+
+        if (curCnt == 0) {
+            if (!isEnd) {
+                lst.add(curLst);
+                curLst = new ArrayList<>();
+                curCnt = queue.size();
+                level++;
+                isEnd = true;
+            } else {
+                break;
+            }
+
+        }
+    }
+}

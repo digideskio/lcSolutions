@@ -478,8 +478,8 @@ public class Solution {
     }
     
     int maxSum(TreeNode root) {
-        if (root == null) return 0;
-        
+        if (root == null) return 0
+ ;       
         int left = Math.max(maxSum(root.left), 0);
         int right = Math.max(maxSum(root.right), 0);
         int rootMax = Math.max(Math.max(left, right), left + right) + root.val;
@@ -870,7 +870,7 @@ public class Solution {
                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
                    minDis[i][j] = minDis[i-1][j-1];
                } else {
-                   minDis[i][j] = Math.min(minDis[i][j-1], minDis[i-1][j], minDis[i-1][j-1]) + 1;
+                   minDis[i][j] = Math.min(Math.min(minDis[i][j-1], minDis[i-1][j-1]), minDis[i-1][j]) + 1;
                }
            }
        }
@@ -1150,8 +1150,8 @@ public class Solution {
             List<TreeNode> rightTrees =  generateTrees(i + 1, high);
 
             for (TreeNode left : leftTrees) {
-                for (TreeNode right : rightTrees) {
-                    TreeNode head = new TreeNode(i);
+                for (TreeNode right : rightTrees) 
+{                    TreeNode head = new TreeNode(i);
                     head.left = left;
                     head.right = right;
                     lst.add(head);
@@ -3246,8 +3246,8 @@ class Solution {
             if (isMatched) {
                 str[p1++] = 'X';
             } else {
-                str[p1++] = str[p2++];
-            }
+                str[p1++] = str[p2++]
+;            }
 
         }
         return new String(str).substring(0, p1);
@@ -4278,4 +4278,60 @@ public class Solution {
         int[] toReturn = {min + 1, max + 1};
         return toReturn;
     }
+}
+
+
+
+// implement strstr
+public class Solution {
+    public  int strStr(String haystack, String needle) {
+        if (needle.length() == 0) return 0;
+        if (haystack.length() == 0) return -1;
+       
+
+        int[] layerover = getLayer(needle);
+        int index = 0;
+        int pos = 0;
+        while (index <= haystack.length() - needle.length()) {
+            for (; pos < needle.length(); pos++) {
+                if (haystack.charAt(index + pos) != needle.charAt(pos)) {
+                    break;
+                }
+            }
+            if (pos == needle.length()) {
+                return index;
+            } else {
+                if (pos == 0) {
+                    index++;
+                } else {
+                    index += pos - layerover[pos-1];
+                    pos = layerover[pos-1];
+                }
+
+            }
+        }
+
+        return -1;
+
+    }
+
+    public  int[] getLayer(String str) {
+        int[] layerOver = new int[str.length()];
+        layerOver[0] = 0;
+
+        for (int i = 1; i < str.length(); i++) {
+            int index = layerOver[i-1];
+            while (index > 0 && str.charAt(index) != str.charAt(i)) {
+                index = layerOver[index-1];
+            }
+            if (str.charAt(index) == str.charAt(i)) {
+                layerOver[i] = layerOver[i-1] + 1;
+            } else {
+                layerOver[i] = 0;
+            }
+        }
+
+        return layerOver;
+    }
+
 }
