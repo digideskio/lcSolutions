@@ -223,3 +223,245 @@ void swap(int[] arr, int i, int j) {
     arr[i] = arr[j];
     arr[j] = tmp;
 }
+
+
+public int maxProfit(int[] prices) {
+        int k = 4;
+        int n = prices.length;
+        // max profit from i to j
+        int profit[][] = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            int min = prices[i];
+            int maxProfit = 0;
+            for (int j = i + 1; j < n; j++) {
+                min = Math.min(prices[j], min);
+                maxProfit = Math.max(prices[j] - min, maxProfit);
+                profit[i][j] = maxProfit;
+            }
+        }
+
+        int cache[][] = new int[n + 1][k + 1];
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= k; j++) {
+                int max = cache[i - 1][j];
+                for (int m = 0; m < i; m++) {
+                    max = Math.max(max, cache[i - m][j - 1] + profit[i - m - 1][i - 1]);
+                }
+                cache[i][j] = max;
+            }
+        }
+
+        return cache[n][k];
+    }
+
+
+
+
+
+
+
+
+//isMatch Regular Expression Matching 
+public class Solution {
+   public boolean isMatch(String s, String p) {
+        if (s.length() == 0 && p.length() == 0) return true;
+        else if (p.length() == 0) return false;
+
+        if (s.length() == 0) {
+            if (p.length() > 1 && p.charAt(1) == '*') {
+                return isMatch(s, p.substring(2));
+            } else {
+                return false;
+            }
+        } else {
+            if (p.length() > 1 && p.charAt(1) == '*') {
+                 String ss = s;
+                char match = p.charAt(0);
+                if(isMatch(ss, p.substring(2))) return true;
+                while (ss.length() > 0 && ((ss.charAt(0) == match) || match == '.')) {
+                    ss = ss.substring(1);
+                    if(isMatch(ss, p.substring(2))) return true;
+                }
+                return false;
+            } else if (s.charAt(0) == p.charAt(0) || p.charAt(0) == '.') {
+                return isMatch(s.substring(1), p.substring(1));
+            } else   {
+                return false;
+            }
+        }
+    }
+}
+
+
+//Longest Common Prefix 
+public class Solution {
+    public String longestCommonPrefix(String[] strs) {
+        StringBuffer sb = new StringBuffer();
+        if (strs == null || strs.length == 0) return sb.toString();
+        if (strs.length == 1) return strs[0];
+        
+        for (int i = 0; ; i++) {
+            boolean success = true;
+            for (int j = 0; j < strs.length - 1; j++) {
+                if (strs[j].length() <= i || strs[j + 1].length() <= i || strs[j].charAt(i) != strs[j+1].charAt(i)) {
+                    success = false;
+                    break;
+                }
+            }
+            if (success) {
+                sb.append(strs[0].charAt(i));
+            } else {
+                break;
+            }
+        }
+        
+        return sb.toString();
+    }
+}
+
+//combination sum II
+public class Solution {
+    public List<List<Integer>> combinationSum2(int[] num, int target) {
+        Arrays.sort(num);
+        return comSum(num, target, 0);
+    }
+
+    List<List<Integer>> comSum(int[] num, int target, int index) {
+        List<List<Integer>> lst = new LinkedList<List<Integer>>();
+        if (target == 0) {
+            lst.add(Collections.<Integer>emptyList());
+            return lst;
+        } else if (target < 0) {
+            return lst;
+        }
+
+        for (int i = index; i < num.length; i++) {
+            if (i != index && num[i] == num[i - 1]) continue;
+            List<List<Integer>> rest = comSum(num, target - num[i], i + 1);
+            for (List<Integer> r : rest) {
+                List<Integer> l = new LinkedList<Integer>(r);
+                l.add(0, num[i]);
+                lst.add(l);
+            }
+        }
+        return lst;
+
+    }
+}
+
+// wildcard matching
+public class Solution {
+    Set<String> set = new HashSet<String>();
+    public boolean isMatch(String s, String p) {
+        int ss = 0, pp = 0, match = 0, starIdx = -1;
+        while (ss < s.length()){
+            // advancing both pointers
+            if (pp < p.length()  && (p.charAt(pp) == '?' || s.charAt(ss) == p.charAt(pp))){
+                ss++;
+                pp++;
+            }
+            // * found, only advancing p pointer
+            else if (pp < p.length() && p.charAt(pp) == '*'){
+                starIdx = pp;
+                match = ss;
+                pp++;
+            }
+            // last p pointer was *, advancing string pointer
+            else if (starIdx != -1){
+                pp = starIdx + 1;
+                match++;
+                ss = match;
+            }
+            //current p pointer is not star, last patter pointer was not *
+            //characters do not match
+            else return false;
+        }
+
+        //check for remaining characters in p
+        while (pp < p.length() && p.charAt(pp) == '*')
+            pp++;
+
+        return pp == p.length();
+
+    }
+}
+
+// reversewords: Reverse Words in a String
+// two sols, the second of which used regular expression
+
+class Solution {
+    public String reverseWords(String s) {
+       StringBuilder sb = new StringBuilder();
+       
+       int strEnd = s.length() - 1;
+       while (strEnd >= 0 && s.charAt(strEnd) == ' ') {
+           strEnd--;
+       }
+       if (strEnd < 0) return sb.toString();
+       
+       int left = strEnd,
+           right = strEnd;
+           
+       while (left >= 0) {
+           boolean isWord = false;
+            while (left >= 0 && s.charAt(left) != ' ') {
+                left--;
+                isWord = true;
+            }
+            
+            if (isWord) {
+                sb.append((sb.length() == 0 ? "" : " ") + s.substring(left + 1, right + 1));
+            }
+            
+            while (left >= 0 && s.charAt(left) == ' ') {
+                left--;
+            }
+            
+            right = left;
+       }
+       
+       return sb.toString();
+    }
+  
+        
+
+}
+
+
+//Insert Interval 
+public class Solution {
+    public List<Interval> insert(List<Interval> intervals, Interval newInterval) {
+        if(intervals.isEmpty()){
+            intervals.add(newInterval);
+            return intervals;
+        }
+
+        int start = newInterval.start;
+        int end = newInterval.end;
+        ListIterator<Interval> li = intervals.listIterator();
+        boolean inserted = false;
+        while(li.hasNext()){
+            Interval itv = li.next();
+            if(start <= itv.end){
+                if(end < itv.start){ //newInterval does not overlap with current itv, time to insert
+                    li.previous();
+                    li.add(new Interval(start, end));
+                    
+                    inserted = true;
+                    break;
+                }
+
+                // still some overlap so compare start & end
+                start = Math.min(start, itv.start);
+                end = Math.max(end, itv.end);
+                li.remove();
+            }
+        }
+
+        if(!inserted){
+            intervals.add(new Interval(start, end));
+        }
+
+        return intervals;
+    }
+}

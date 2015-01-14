@@ -57,19 +57,19 @@ public class Solution {
             x = t / m;
             y = t % m;
 
-            visited[x][y] = true; // this will not flip
-            if (y + 1 < m && !visited[x][y + 1] && board[x][y + 1] == 'O') {
+            if (x < 0 || x > n || y < 0 || y > m) continue;
+            if (visited[x][y]) continue;
+
+            if (board[x][y] == 'O') {
+                visited[x][y] = true;
                 queue.push(x * m + y + 1);
-            }
-            if (x + 1 < n && !visited[x + 1][y] && board[x + 1][y] == 'O') {
                 queue.push((x + 1) * m + y);
-            }
-            if (y >= 1 && !visited[x][y - 1] && board[x][y - 1] == 'O') {
                 queue.push(x * m + y - 1);
-            }
-            if (x >= 1 && !visited[x - 1][y] && board[x - 1][y] == 'O') {
                 queue.push((x - 1) * m + y);
+
             }
+
+      
         }
     }
 }

@@ -1336,7 +1336,37 @@ public class Solution {
         return map.get(node.label);
     }
 }
+// a better solution without visited set
+public class Solution {
+        public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        if (node == null) return node;
+        Queue<UndirectedGraphNode> queue = new ArrayDeque<>();
+        
+        
+        Map<Integer,UndirectedGraphNode> map = new HashMap<>();
+        queue.add(node);
+        UndirectedGraphNode copyGraph = new UndirectedGraphNode(node.label);
+        map.put(node.label, copyGraph);
+        
+        while (!queue.isEmpty()) {
+            UndirectedGraphNode n = queue.poll();
+            UndirectedGraphNode newNode = map.get(n.label);
 
+            for (UndirectedGraphNode child : n.neighbors) {
+                if (map.containsKey(child.label)) {
+                    newNode.neighbors.add(map.get(child.label));
+                } else {
+                    UndirectedGraphNode newChild = new UndirectedGraphNode(child.label);
+                    newNode.neighbors.add(newChild);
+                    map.put(child.label, newChild);
+                    queue.add(child);
+                }   
+            }
+        }
+        
+        return copyGraph;
+    }
+}
 
 /* 
 @Q: Set Matrix Zeroes
